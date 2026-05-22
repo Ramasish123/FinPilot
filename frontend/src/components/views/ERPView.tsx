@@ -1,8 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Building2, Link2, CheckCircle2, ArrowRight, RefreshCw, Settings } from "lucide-react";
+import { Building2, Link2, CheckCircle2, ArrowRight, RefreshCw, Settings, Loader2 } from "lucide-react";
+import { useToast } from "@/components/Toast";
 
 const containerVariants = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.08 } } };
 const itemVariants = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { duration: 0.5 } } };
@@ -17,6 +18,29 @@ const erpSystems = [
 ];
 
 export default function ERPView() {
+  const { success } = useToast();
+  const [systems, setSystems] = useState(erpSystems);
+  const [connectingId, setConnectingId] = useState<string | null>(null);
+  const [syncingId, setSyncingId] = useState<string | null>(null);
+
+  const handleConnect = (name: string) => {
+    setConnectingId(name);
+    setTimeout(() => {
+      setSystems(prev => prev.map(s => s.name === name ? { ...s, status: "connected", lastSync: "just now" } : s));
+      setConnectingId(null);
+      success(`Successfully connected to ${name}`);
+    }, 1500);
+  };
+
+  const handleSync = (name: string) => {
+    setSyncingId(name);
+    setTimeout(() => {
+      setSystems(prev => prev.map(s => s.name === name ? { ...s, lastSync: "just now" } : s));
+      setSyncingId(null);
+      success(`Synced data with ${name}`);
+    }, 1000);
+  };
+
   return (
     <motion.div variants={containerVariants} initial="hidden" animate="show" className="p-6 space-y-6">
       <motion.div variants={itemVariants}>
@@ -25,7 +49,7 @@ export default function ERPView() {
       </motion.div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        {erpSystems.map((erp) => (
+        {systems.map((erp) => (
           <motion.div key={erp.name} variants={itemVariants} whileHover={{ scale: 1.02 }} className="glass-card p-5 cursor-pointer">
             <div className="flex items-start justify-between mb-4">
               <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${erp.color} flex items-center justify-center`}>
@@ -47,11 +71,32 @@ export default function ERPView() {
             {erp.status === "connected" ? (
               <div className="flex items-center justify-between pt-3 border-t border-white/[0.04]">
                 <span className="text-[10px] text-[#5a6a8a]">Synced: {erp.lastSync}</span>
-                <button className="flex items-center gap-1 text-xs text-[#4361ee]"><RefreshCw className="w-3 h-3" />Sync</button>
+                <button 
+                  onClick={() => handleSync(erp.name)}
+                  disabled={syncingId === erp.name}
+                  className="flex items-center gap-1 text-xs text-[#4361ee] disabled:opacity-50"
+                >
+                  <RefreshCw className={`w-3 h-3 ${syncingId === erp.name ? "animate-spin" : ""}`} />
+                  {syncingId === erp.name ? "Syncing..." : "Sync"}
+                </button>
               </div>
             ) : (
-              <button className="btn-primary w-full !text-xs flex items-center justify-center gap-1">
-                <Link2 className="w-3 h-3" />Connect
+              <button 
+                onClick={() => handleConnect(erp.name)}
+                disabled={connectingId === erp.name}
+                className="btn-primary w-full !text-xs flex items-center justify-center gap-1 disabled:opacity-50"
+              >
+                {connectingId === erp.name ? (
+                  <>
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                    Connecting...
+                  </>
+                ) : (
+                  <>
+                    <Link2 className="w-3 h-3" />
+                    Connect
+                  </>
+                )}
               </button>
             )}
           </motion.div>

@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Home,
   Car,
@@ -14,8 +14,12 @@ import {
   ChevronRight,
   Calculator,
   ArrowDownRight,
+  Plus,
+  X,
 } from "lucide-react";
-import { mockLoans, formatCurrency } from "@/lib/data";
+import { formatCurrency, Loan } from "@/lib/data";
+import { api } from "@/lib/api";
+import { useToast } from "@/components/Toast";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -44,17 +48,98 @@ const loanColors: Record<string, string> = {
 };
 
 export default function LoansView() {
-  const totalEMI = mockLoans.reduce((s, l) => s + l.emi, 0);
-  const totalOutstanding = mockLoans.reduce((s, l) => s + l.remaining, 0);
+  const { success, error } = useToast();
+  const [loans, setLoans] = useState<Loan[]>([]);
+  const [totalEMI, setTotalEMI] = useState(0);
+  const [totalOutstanding, setTotalOutstanding] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Apply Modal state
+  const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
+  const [applyForm, setApplyForm] = useState({ name: "", type: "home", amount: "", rate: "", term: "" });
+
+  // Payment Modal state
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [paymentLoanId, setPaymentLoanId] = useState<string | null>(null);
+  const [paymentAmount, setPaymentAmount] = useState("");
+
+  const fetchLoans = async () => {
+    try {
+      const res = await api.get("/loans");
+      setLoans(res.loans || []);
+      setTotalEMI(res.totalEMI || 0);
+      setTotalOutstanding(res.totalOutstanding || 0);
+    } catch (err) {
+      error("Failed to fetch loans");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchLoans();
+  }, []);
+
+  const handleApply = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await api.post("/loans/apply", {
+        name: applyForm.name,
+        type: applyForm.type,
+        amount: Number(applyForm.amount),
+        rate: Number(applyForm.rate),
+        term: Number(applyForm.term),
+      });
+      success("Loan application submitted successfully");
+      setIsApplyModalOpen(false);
+      setApplyForm({ name: "", type: "home", amount: "", rate: "", term: "" });
+      fetchLoans();
+    } catch (err) {
+      error("Failed to submit application");
+    }
+  };
+
+  const openPaymentModal = (loanId: string) => {
+    setPaymentLoanId(loanId);
+    setPaymentAmount("");
+    setIsPaymentModalOpen(true);
+  };
+
+  const handlePayment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!paymentLoanId) return;
+    try {
+      await api.patch(`/loans/${paymentLoanId}/payment`, {
+        amount: Number(paymentAmount),
+      });
+      success("Payment processed successfully");
+      setIsPaymentModalOpen(false);
+      setPaymentAmount("");
+      setPaymentLoanId(null);
+      fetchLoans();
+    } catch (err) {
+      error("Failed to process payment");
+    }
+  };
 
   return (
     <motion.div variants={containerVariants} initial="hidden" animate="show" className="p-6 space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-bold text-[#f0f4ff]">Loans & Credit</h2>
+        <button
+          onClick={() => setIsApplyModalOpen(true)}
+          className="btn btn-primary flex items-center gap-2"
+        >
+          <Plus className="w-4 h-4" /> Apply for Loan
+        </button>
+      </div>
+
       {/* Summary */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <motion.div variants={itemVariants} className="glass-card metric-card rose p-4">
           <p className="text-xs text-[#5a6a8a] mb-1">Total Outstanding</p>
           <p className="text-2xl font-bold text-[#f43f5e]">{formatCurrency(totalOutstanding)}</p>
-          <p className="text-xs text-[#94a3c8] mt-1">{mockLoans.length} active loans</p>
+          <p className="text-xs text-[#94a3c8] mt-1">{loans.length} active loans</p>
         </motion.div>
         <motion.div variants={itemVariants} className="glass-card metric-card amber p-4">
           <p className="text-xs text-[#5a6a8a] mb-1">Monthly EMI</p>
@@ -72,65 +157,84 @@ export default function LoansView() {
 
       {/* Loan Cards */}
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
-        {mockLoans.map((loan) => {
-          const Icon = loanIcons[loan.type] || CreditCard;
-          const gradient = loanColors[loan.type] || "from-[#4361ee] to-[#0ea5e9]";
-          const paidPercent = ((loan.principal - loan.remaining) / loan.principal) * 100;
+        {isLoading ? (
+          <div className="col-span-full py-12 flex justify-center">
+            <div className="w-8 h-8 border-2 border-[#4361ee] border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        ) : loans.length === 0 ? (
+          <div className="col-span-full py-12 text-center">
+            <p className="text-[#5a6a8a]">No active loans found.</p>
+          </div>
+        ) : (
+          loans.map((loan) => {
+            const Icon = loanIcons[loan.type] || CreditCard;
+            const gradient = loanColors[loan.type] || "from-[#4361ee] to-[#0ea5e9]";
+            const paidPercent = loan.principal > 0 ? ((loan.principal - loan.remaining) / loan.principal) * 100 : 0;
 
-          return (
-            <motion.div
-              key={loan.id}
-              variants={itemVariants}
-              whileHover={{ scale: 1.01 }}
-              className="glass-card p-5 cursor-pointer"
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center`}>
-                  <Icon className="w-5 h-5 text-white" />
+            return (
+              <motion.div
+                key={loan.id}
+                variants={itemVariants}
+                whileHover={{ scale: 1.01 }}
+                className="glass-card p-5 flex flex-col"
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center`}>
+                    <Icon className="w-5 h-5 text-white" />
+                  </div>
+                  <span className={`badge ${loan.status === 'active' ? 'badge-success' : 'badge-neutral'}`}>
+                    {loan.status.charAt(0).toUpperCase() + loan.status.slice(1)}
+                  </span>
                 </div>
-                <span className="badge badge-success">Active</span>
-              </div>
 
-              <h4 className="text-sm font-semibold text-[#f0f4ff] mb-1">{loan.name}</h4>
-              <p className="text-xs text-[#5a6a8a] mb-4">Interest Rate: {loan.rate}% p.a.</p>
+                <h4 className="text-sm font-semibold text-[#f0f4ff] mb-1">{loan.name}</h4>
+                <p className="text-xs text-[#5a6a8a] mb-4">Interest Rate: {loan.rate}% p.a.</p>
 
-              {/* Progress */}
-              <div className="mb-4">
-                <div className="flex justify-between mb-1.5">
-                  <span className="text-[10px] text-[#94a3c8]">Paid: {paidPercent.toFixed(1)}%</span>
-                  <span className="text-[10px] text-[#94a3c8]">{formatCurrency(loan.principal)}</span>
+                {/* Progress */}
+                <div className="mb-4">
+                  <div className="flex justify-between mb-1.5">
+                    <span className="text-[10px] text-[#94a3c8]">Paid: {paidPercent.toFixed(1)}%</span>
+                    <span className="text-[10px] text-[#94a3c8]">{formatCurrency(loan.principal)}</span>
+                  </div>
+                  <div className="progress-bar !h-2">
+                    <div
+                      className={`progress-bar-fill bg-gradient-to-r ${gradient}`}
+                      style={{ width: `${Math.min(paidPercent, 100)}%` }}
+                    />
+                  </div>
                 </div>
-                <div className="progress-bar !h-2">
-                  <div
-                    className={`progress-bar-fill bg-gradient-to-r ${gradient}`}
-                    style={{ width: `${paidPercent}%` }}
-                  />
-                </div>
-              </div>
 
-              {/* Details Grid */}
-              <div className="grid grid-cols-2 gap-3 text-center">
-                <div className="p-2.5 rounded-xl bg-white/[0.02]">
-                  <p className="text-[10px] text-[#5a6a8a] mb-0.5">Remaining</p>
-                  <p className="text-sm font-bold text-[#f0f4ff]">{formatCurrency(loan.remaining)}</p>
+                {/* Details Grid */}
+                <div className="grid grid-cols-2 gap-3 text-center flex-grow">
+                  <div className="p-2.5 rounded-xl bg-white/[0.02]">
+                    <p className="text-[10px] text-[#5a6a8a] mb-0.5">Remaining</p>
+                    <p className="text-sm font-bold text-[#f0f4ff]">{formatCurrency(loan.remaining)}</p>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-white/[0.02]">
+                    <p className="text-[10px] text-[#5a6a8a] mb-0.5">Monthly EMI</p>
+                    <p className="text-sm font-bold text-[#f59e0b]">{formatCurrency(loan.emi)}</p>
+                  </div>
                 </div>
-                <div className="p-2.5 rounded-xl bg-white/[0.02]">
-                  <p className="text-[10px] text-[#5a6a8a] mb-0.5">Monthly EMI</p>
-                  <p className="text-sm font-bold text-[#f59e0b]">{formatCurrency(loan.emi)}</p>
-                </div>
-              </div>
 
-              {/* Next Due */}
-              <div className="flex items-center justify-between mt-4 pt-3 border-t border-white/[0.04]">
-                <div className="flex items-center gap-2 text-xs text-[#94a3c8]">
-                  <Calendar className="w-3.5 h-3.5" />
-                  Next: {new Date(loan.nextDue).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+                {/* Next Due and Payment Button */}
+                <div className="flex items-center justify-between mt-4 pt-3 border-t border-white/[0.04]">
+                  <div className="flex items-center gap-2 text-xs text-[#94a3c8]">
+                    <Calendar className="w-3.5 h-3.5" />
+                    Next: {new Date(loan.nextDue).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+                  </div>
+                  {loan.status === 'active' && (
+                    <button
+                      onClick={() => openPaymentModal(loan.id)}
+                      className="text-xs font-medium text-[#4361ee] hover:text-[#0ea5e9] transition-colors"
+                    >
+                      Make Payment
+                    </button>
+                  )}
                 </div>
-                <ChevronRight className="w-4 h-4 text-[#5a6a8a]" />
-              </div>
-            </motion.div>
-          );
-        })}
+              </motion.div>
+            );
+          })
+        )}
       </div>
 
       {/* AI Recommendations */}
@@ -172,6 +276,129 @@ export default function LoansView() {
           </div>
         </div>
       </motion.div>
+
+      {/* Modals */}
+      <AnimatePresence>
+        {isApplyModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="glass-card w-full max-w-md p-6 relative"
+            >
+              <button
+                onClick={() => setIsApplyModalOpen(false)}
+                className="absolute top-4 right-4 p-1.5 rounded-lg hover:bg-white/10 text-[#94a3c8] transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+              <h2 className="text-xl font-bold text-[#f0f4ff] mb-6">Apply for Loan</h2>
+              <form onSubmit={handleApply} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-[#94a3c8] mb-1">Loan Name</label>
+                  <input
+                    required
+                    type="text"
+                    value={applyForm.name}
+                    onChange={(e) => setApplyForm({ ...applyForm, name: e.target.value })}
+                    className="w-full bg-[#0b1221] border border-white/10 rounded-xl px-4 py-2.5 text-[#f0f4ff] focus:outline-none focus:border-[#4361ee] transition-colors"
+                    placeholder="e.g. Home Renovation"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[#94a3c8] mb-1">Type</label>
+                  <select
+                    value={applyForm.type}
+                    onChange={(e) => setApplyForm({ ...applyForm, type: e.target.value })}
+                    className="w-full bg-[#0b1221] border border-white/10 rounded-xl px-4 py-2.5 text-[#f0f4ff] focus:outline-none focus:border-[#4361ee] transition-colors appearance-none"
+                  >
+                    <option value="home">Home</option>
+                    <option value="car">Car</option>
+                    <option value="student">Student</option>
+                    <option value="business">Business</option>
+                    <option value="credit_card">Credit Card</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[#94a3c8] mb-1">Amount</label>
+                  <input
+                    required
+                    type="number"
+                    value={applyForm.amount}
+                    onChange={(e) => setApplyForm({ ...applyForm, amount: e.target.value })}
+                    className="w-full bg-[#0b1221] border border-white/10 rounded-xl px-4 py-2.5 text-[#f0f4ff] focus:outline-none focus:border-[#4361ee] transition-colors"
+                    placeholder="e.g. 500000"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-[#94a3c8] mb-1">Interest Rate (%)</label>
+                    <input
+                      required
+                      type="number"
+                      step="0.1"
+                      value={applyForm.rate}
+                      onChange={(e) => setApplyForm({ ...applyForm, rate: e.target.value })}
+                      className="w-full bg-[#0b1221] border border-white/10 rounded-xl px-4 py-2.5 text-[#f0f4ff] focus:outline-none focus:border-[#4361ee] transition-colors"
+                      placeholder="e.g. 8.5"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-[#94a3c8] mb-1">Term (Months)</label>
+                    <input
+                      required
+                      type="number"
+                      value={applyForm.term}
+                      onChange={(e) => setApplyForm({ ...applyForm, term: e.target.value })}
+                      className="w-full bg-[#0b1221] border border-white/10 rounded-xl px-4 py-2.5 text-[#f0f4ff] focus:outline-none focus:border-[#4361ee] transition-colors"
+                      placeholder="e.g. 60"
+                    />
+                  </div>
+                </div>
+                <button type="submit" className="w-full btn btn-primary py-2.5 mt-2">
+                  Submit Application
+                </button>
+              </form>
+            </motion.div>
+          </div>
+        )}
+
+        {isPaymentModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="glass-card w-full max-w-sm p-6 relative"
+            >
+              <button
+                onClick={() => setIsPaymentModalOpen(false)}
+                className="absolute top-4 right-4 p-1.5 rounded-lg hover:bg-white/10 text-[#94a3c8] transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+              <h2 className="text-xl font-bold text-[#f0f4ff] mb-6">Make Payment</h2>
+              <form onSubmit={handlePayment} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-[#94a3c8] mb-1">Amount</label>
+                  <input
+                    required
+                    type="number"
+                    value={paymentAmount}
+                    onChange={(e) => setPaymentAmount(e.target.value)}
+                    className="w-full bg-[#0b1221] border border-white/10 rounded-xl px-4 py-2.5 text-[#f0f4ff] focus:outline-none focus:border-[#4361ee] transition-colors"
+                    placeholder="Enter amount"
+                  />
+                </div>
+                <button type="submit" className="w-full btn btn-primary py-2.5 mt-2">
+                  Confirm Payment
+                </button>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }

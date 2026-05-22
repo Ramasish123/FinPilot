@@ -1,7 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion, type Variants } from "framer-motion";
+import { api } from "@/lib/api";
+import { useToast } from "@/components/Toast";
 import {
   TrendingUp,
   TrendingDown,
@@ -129,7 +131,26 @@ function CustomTooltip({ active, payload, label }: any) {
   );
 }
 
-export default function DashboardView() {
+export default function DashboardView({ onNavigate }: { onNavigate?: (tab: string) => void }) {
+  const [recentTransactions, setRecentTransactions] = useState<any[]>(mockTransactions.slice(0, 7));
+  const { error } = useToast();
+
+  useEffect(() => {
+    async function fetchDashboardData() {
+      try {
+        const data = await api.get("/transactions?limit=7");
+        if (Array.isArray(data)) {
+          setRecentTransactions(data);
+        } else if (data.transactions) {
+          setRecentTransactions(data.transactions);
+        }
+      } catch (err) {
+        error("Failed to load recent transactions");
+      }
+    }
+    fetchDashboardData();
+  }, []);
+
   return (
     <motion.div
       variants={containerVariants}
@@ -402,6 +423,7 @@ export default function DashboardView() {
               <motion.div
                 key={insight.id}
                 whileHover={{ x: 4 }}
+                onClick={() => onNavigate && onNavigate("strategy")}
                 className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.04] hover:border-white/[0.08] cursor-pointer transition-colors"
               >
                 <div className="flex items-start gap-3">
@@ -431,14 +453,17 @@ export default function DashboardView() {
         <motion.div variants={itemVariants} className="glass-card p-5">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-semibold text-[#f0f4ff]">Recent Transactions</h3>
-            <button className="text-xs text-[#4361ee] hover:text-[#6381fc] font-medium flex items-center gap-1">
+            <button
+              onClick={() => onNavigate && onNavigate("transactions")}
+              className="text-xs text-[#4361ee] hover:text-[#6381fc] font-medium flex items-center gap-1"
+            >
               View All <ArrowUpRight className="w-3 h-3" />
             </button>
           </div>
           <div className="space-y-2">
-            {mockTransactions.slice(0, 7).map((txn) => (
+            {recentTransactions.map((txn: any) => (
               <div
-                key={txn.id}
+                key={txn.id || txn._id || Math.random()}
                 className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-white/[0.02] transition-colors"
               >
                 <div
@@ -456,7 +481,7 @@ export default function DashboardView() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-medium text-[#f0f4ff] truncate">{txn.merchant}</p>
-                  <p className="text-[10px] text-[#5a6a8a]">{txn.aiCategory} • {txn.date}</p>
+                  <p className="text-[10px] text-[#5a6a8a]">{txn.aiCategory || txn.category} • {txn.date}</p>
                 </div>
                 <div className="text-right">
                   <p

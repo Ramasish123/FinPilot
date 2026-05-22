@@ -180,8 +180,28 @@ export default function ChatbotView() {
     setInput("");
     setIsTyping(true);
 
-    // Simulate AI thinking
-    setTimeout(() => {
+    try {
+      const response = await fetch("http://localhost:8000/api/ai/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: messageText, user_id: "usr_001" }),
+      });
+      
+      if (!response.ok) {
+        throw new Error("API response was not ok");
+      }
+      
+      const data = await response.json();
+      
+      const aiResponse: ChatMessage = {
+        id: `msg_${Date.now() + 1}`,
+        role: "assistant",
+        content: data.response,
+        timestamp: new Date().toISOString(),
+      };
+      setMessages((prev) => [...prev, aiResponse]);
+    } catch (error) {
+      // Fallback to mock response
       const aiResponse: ChatMessage = {
         id: `msg_${Date.now() + 1}`,
         role: "assistant",
@@ -189,8 +209,9 @@ export default function ChatbotView() {
         timestamp: new Date().toISOString(),
       };
       setMessages((prev) => [...prev, aiResponse]);
+    } finally {
       setIsTyping(false);
-    }, 1500 + Math.random() * 1000);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {

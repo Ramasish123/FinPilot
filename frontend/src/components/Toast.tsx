@@ -58,13 +58,13 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
-  const ctx: ToastContextType = {
+  const ctx: ToastContextType = React.useMemo(() => ({
     addToast,
     success: (title, message) => addToast("success", title, message),
     error: (title, message) => addToast("error", title, message),
     warning: (title, message) => addToast("warning", title, message),
     info: (title, message) => addToast("info", title, message),
-  };
+  }), [addToast]);
 
   return (
     <ToastContext.Provider value={ctx}>

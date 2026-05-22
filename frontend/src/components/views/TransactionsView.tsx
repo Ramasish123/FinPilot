@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   ArrowUpRight,
@@ -11,8 +11,11 @@ import {
   Eye,
   MoreHorizontal,
   AlertTriangle,
+  X,
 } from "lucide-react";
-import { mockTransactions, formatCurrency } from "@/lib/data";
+import { formatCurrency } from "@/lib/data";
+import { api, exportData } from "@/lib/api";
+import { useToast } from "@/components/Toast";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -31,10 +34,41 @@ export default function TransactionsView() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedStatus, setSelectedStatus] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
+  const [transactions, setTransactions] = useState<any[]>([]);
+  const [selectedTxn, setSelectedTxn] = useState<any | null>(null);
+  const [loading, setLoading] = useState(true);
+  const { success, error } = useToast();
 
-  const filtered = mockTransactions.filter((t) => {
-    if (selectedCategory !== "All" && t.category !== selectedCategory) return false;
-    if (selectedStatus !== "All" && t.status !== selectedStatus.toLowerCase()) return false;
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        setLoading(true);
+        const params = new URLSearchParams();
+        if (selectedCategory !== "All") params.append("category", selectedCategory);
+        if (selectedStatus !== "All") params.append("status", selectedStatus.toLowerCase());
+        
+        const qs = params.toString();
+        const data = await api.get(`/transactions${qs ? `?${qs}` : ""}`);
+        setTransactions(data.transactions || []);
+      } catch (err) {
+        error("Error", "Failed to load transactions.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchTransactions();
+  }, [selectedCategory, selectedStatus]);
+
+  const handleExport = async () => {
+    try {
+      await exportData("transactions");
+      success("Export Successful", "Transactions data has been exported.");
+    } catch (err) {
+      error("Export Failed", "Could not export transactions.");
+    }
+  };
+
+  const filtered = transactions.filter((t) => {
     if (searchQuery && !t.merchant.toLowerCase().includes(searchQuery.toLowerCase())) return false;
     return true;
   });
@@ -99,7 +133,7 @@ export default function TransactionsView() {
               ))}
             </select>
           </div>
-          <button className="btn-secondary !py-2 flex items-center gap-2">
+          <button onClick={handleExport} className="btn-secondary !py-2 flex items-center gap-2">
             <Download className="w-4 h-4" />
             Export
           </button>
@@ -160,7 +194,7 @@ export default function TransactionsView() {
                   </span>
                 </td>
                 <td className="text-center">
-                  <button className="p-1.5 rounded-lg hover:bg-white/[0.05] transition-colors">
+                  <button onClick={() => setSelectedTxn(txn)} className="p-1.5 rounded-lg hover:bg-white/[0.05] transition-colors">
                     <MoreHorizontal className="w-4 h-4 text-[#5a6a8a]" />
                   </button>
                 </td>
@@ -169,6 +203,59 @@ export default function TransactionsView() {
           </tbody>
         </table>
       </motion.div>
+
+      {/* Transaction Modal */}
+      {selectedTxn && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="glass-card max-w-md w-full p-6 relative">
+            <button onClick={() => setSelectedTxn(null)} className="absolute top-4 right-4 p-1.5 hover:bg-white/[0.05] rounded-lg transition-colors">
+              <X className="w-4 h-4 text-[#5a6a8a]" />
+            </button>
+            <h3 className="text-xl font-semibold text-[#f0f4ff] mb-4">Transaction Details</h3>
+            
+            <div className="space-y-4">
+              <div>
+                <p className="text-sm text-[#5a6a8a]">Merchant</p>
+                <p className="text-base text-[#f0f4ff]">{selectedTxn.merchant}</p>
+              </div>
+              <div>
+                <p className="text-sm text-[#5a6a8a]">Amount</p>
+                <p className={`text-base font-semibold ${selectedTxn.type === "credit" ? "text-[#10b981]" : "text-[#f43f5e]"}`}>
+                  {selectedTxn.type === "credit" ? "+" : "-"}{formatCurrency(selectedTxn.amount)}
+                </p>
+              </div>
+              <div>
+                <p className="text-sm text-[#5a6a8a]">Date</p>
+                <p className="text-base text-[#f0f4ff]">{new Date(selectedTxn.date).toLocaleString()}</p>
+              </div>
+              <div>
+                <p className="text-sm text-[#5a6a8a]">Category</p>
+                <p className="text-base text-[#f0f4ff]">{selectedTxn.category}</p>
+              </div>
+              <div>
+                <p className="text-sm text-[#5a6a8a]">AI Category</p>
+                <p className="text-base text-[#f0f4ff]">{selectedTxn.aiCategory}</p>
+              </div>
+              <div>
+                <p className="text-sm text-[#5a6a8a]">Account</p>
+                <p className="text-base text-[#f0f4ff]">{selectedTxn.account}</p>
+              </div>
+              <div>
+                <p className="text-sm text-[#5a6a8a]">Status</p>
+                <span className={`mt-1 inline-block badge ${selectedTxn.status === "completed" ? "badge-success" : selectedTxn.status === "pending" ? "badge-warning" : "badge-danger"}`}>
+                  {selectedTxn.status}
+                </span>
+              </div>
+              {selectedTxn.flagged && (
+                <div className="flex items-center gap-2 text-[#f59e0b] mt-2">
+                  <AlertTriangle className="w-4 h-4" />
+                  <span className="text-sm">Flagged for review</span>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        </div>
+      )}
     </motion.div>
   );
 }

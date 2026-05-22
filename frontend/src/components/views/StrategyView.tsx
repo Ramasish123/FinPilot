@@ -81,7 +81,7 @@ const corporateStrategies = [
   },
 ];
 
-export default function StrategyView() {
+export default function StrategyView({ onNavigate }: { onNavigate?: (tab: string) => void }) {
   return (
     <motion.div variants={containerVariants} initial="hidden" animate="show" className="p-6 space-y-6">
       {/* Header */}
@@ -184,7 +184,10 @@ export default function StrategyView() {
                 <p className="text-xs text-[#94a3c8] mb-3 leading-relaxed">{strategy.description}</p>
                 <div className="flex items-center justify-between pt-3 border-t border-white/[0.04]">
                   <span className="text-xs font-bold text-[#06d6a0]">{strategy.impact}</span>
-                  <button className="flex items-center gap-1 text-xs text-[#4361ee] hover:underline">
+                  <button
+                    onClick={() => onNavigate && onNavigate("dashboard")}
+                    className="flex items-center gap-1 text-xs text-[#4361ee] hover:underline"
+                  >
                     Explore <ArrowRight className="w-3 h-3" />
                   </button>
                 </div>

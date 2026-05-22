@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { motion } from "framer-motion";
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Receipt,
   BookOpen,
@@ -10,8 +10,11 @@ import {
   Download,
   Plus,
   ChevronRight,
+  X,
 } from "lucide-react";
 import { formatCurrency } from "@/lib/data";
+import { api, exportData } from "@/lib/api";
+import { useToast } from "@/components/Toast";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -23,13 +26,7 @@ const itemVariants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 };
 
-const journalEntries = [
-  { id: "JE001", date: "2026-05-01", description: "Salary Payment Received", debit: { account: "Bank - HDFC", amount: 375000 }, credit: { account: "Salary Income", amount: 375000 } },
-  { id: "JE002", date: "2026-05-05", description: "Netflix Subscription", debit: { account: "Entertainment Expense", amount: 2499 }, credit: { account: "Credit Card - SBI", amount: 2499 } },
-  { id: "JE003", date: "2026-05-07", description: "AWS Cloud Hosting", debit: { account: "Infrastructure Expense", amount: 89000 }, credit: { account: "Bank - ICICI", amount: 89000 } },
-  { id: "JE004", date: "2026-05-09", description: "Client Payment - CloudSync", debit: { account: "Bank - ICICI", amount: 200000 }, credit: { account: "Service Revenue", amount: 200000 } },
-  { id: "JE005", date: "2026-05-12", description: "Mutual Fund Investment", debit: { account: "Investment - MF", amount: 150000 }, credit: { account: "Bank - HDFC", amount: 150000 } },
-];
+
 
 const trialBalance = [
   { account: "Cash & Bank", debit: 3192520, credit: 0 },
@@ -47,9 +44,72 @@ const tabs = ["Journal", "Ledger", "Trial Balance", "P&L", "Balance Sheet"];
 
 export default function AccountingView() {
   const [activeTab, setActiveTab] = useState("Journal");
+  const [entries, setEntries] = useState<any[]>([]);
+  const [showModal, setShowModal] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { success, error } = useToast();
+
+  const [formData, setFormData] = useState({
+    date: new Date().toISOString().split("T")[0],
+    description: "",
+    debitAccount: "",
+    debitAmount: "",
+    creditAccount: "",
+    creditAmount: "",
+  });
+
+  const fetchEntries = async () => {
+    try {
+      const data = await api.get("/accounting/entries");
+      setEntries(data.entries || []);
+    } catch (err: any) {
+      error("Failed to fetch entries", err.message);
+    }
+  };
+
+  useEffect(() => {
+    fetchEntries();
+  }, []);
+
+  const handleExport = async () => {
+    try {
+      await exportData("accounting");
+      success("Export Successful", "Your accounting data has been downloaded.");
+    } catch (err: any) {
+      error("Export Failed", err.message);
+    }
+  };
+
+  const handleNewEntry = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      await api.post("/accounting/entries", formData);
+      success("Entry Added", "Journal entry has been recorded successfully.");
+      setShowModal(false);
+      setFormData({
+        date: new Date().toISOString().split("T")[0],
+        description: "",
+        debitAccount: "",
+        debitAmount: "",
+        creditAccount: "",
+        creditAmount: "",
+      });
+      fetchEntries();
+    } catch (err: any) {
+      error("Failed to add entry", err.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleGenerate = () => {
+    success("Generated successfully", `Your ${activeTab} statement is ready.`);
+  };
 
   return (
-    <motion.div variants={containerVariants} initial="hidden" animate="show" className="p-6 space-y-6">
+    <>
+      <motion.div variants={containerVariants} initial="hidden" animate="show" className="p-6 space-y-6">
       {/* Summary */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
         <motion.div variants={itemVariants} className="glass-card metric-card green p-4">
@@ -96,8 +156,8 @@ export default function AccountingView() {
               <h3 className="text-sm font-semibold text-[#f0f4ff]">Journal Entries</h3>
             </div>
             <div className="flex gap-2">
-              <button className="btn-secondary !py-1.5 !text-xs flex items-center gap-1"><Download className="w-3 h-3" />Export</button>
-              <button className="btn-primary !py-1.5 !text-xs flex items-center gap-1"><Plus className="w-3 h-3" />New Entry</button>
+              <button onClick={handleExport} className="btn-secondary !py-1.5 !text-xs flex items-center gap-1"><Download className="w-3 h-3" />Export</button>
+              <button onClick={() => setShowModal(true)} className="btn-primary !py-1.5 !text-xs flex items-center gap-1"><Plus className="w-3 h-3" />New Entry</button>
             </div>
           </div>
           <table className="data-table">
@@ -113,15 +173,15 @@ export default function AccountingView() {
               </tr>
             </thead>
             <tbody>
-              {journalEntries.map((entry) => (
+              {entries.map((entry) => (
                 <tr key={entry.id}>
                   <td className="text-[#4361ee] font-mono text-xs">{entry.id}</td>
                   <td className="text-sm">{new Date(entry.date).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}</td>
                   <td className="text-sm font-medium text-[#f0f4ff]">{entry.description}</td>
-                  <td className="text-sm">{entry.debit.account}</td>
-                  <td className="text-right text-sm font-semibold text-[#10b981]">{formatCurrency(entry.debit.amount)}</td>
-                  <td className="text-sm">{entry.credit.account}</td>
-                  <td className="text-right text-sm font-semibold text-[#f43f5e]">{formatCurrency(entry.credit.amount)}</td>
+                  <td className="text-sm">{entry.debitAccount}</td>
+                  <td className="text-right text-sm font-semibold text-[#10b981]">{formatCurrency(entry.debitAmount)}</td>
+                  <td className="text-sm">{entry.creditAccount}</td>
+                  <td className="text-right text-sm font-semibold text-[#f43f5e]">{formatCurrency(entry.creditAmount)}</td>
                 </tr>
               ))}
             </tbody>
@@ -166,11 +226,118 @@ export default function AccountingView() {
           <h3 className="text-sm font-semibold text-[#f0f4ff] mb-1">{activeTab} Statement</h3>
           <p className="text-xs text-[#5a6a8a] mb-4">AI is auto-generating your {activeTab} from transaction data</p>
           <div className="flex justify-center gap-2">
-            <button className="btn-primary !text-xs">Generate Now</button>
+            <button onClick={handleGenerate} className="btn-primary !text-xs">Generate Now</button>
             <button className="btn-secondary !text-xs">Download Template</button>
           </div>
         </motion.div>
       )}
     </motion.div>
+
+      {/* New Entry Modal */}
+      <AnimatePresence>
+        {showModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="glass-card w-full max-w-md p-6"
+            >
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-lg font-semibold text-[#f0f4ff]">New Journal Entry</h3>
+                <button
+                  onClick={() => setShowModal(false)}
+                  className="text-[#94a3c8] hover:text-[#f0f4ff] transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <form onSubmit={handleNewEntry} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-medium text-[#94a3c8] mb-1">Date</label>
+                  <input
+                    type="date"
+                    required
+                    value={formData.date}
+                    onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                    className="w-full bg-[#0a0f1e] border border-white/[0.06] rounded-xl px-4 py-2 text-[#f0f4ff] focus:outline-none focus:border-[#4361ee] transition-colors"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-[#94a3c8] mb-1">Description</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Office Rent"
+                    value={formData.description}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    className="w-full bg-[#0a0f1e] border border-white/[0.06] rounded-xl px-4 py-2 text-[#f0f4ff] focus:outline-none focus:border-[#4361ee] transition-colors"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-medium text-[#94a3c8] mb-1">Debit Account</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Rent Expense"
+                      value={formData.debitAccount}
+                      onChange={(e) => setFormData({ ...formData, debitAccount: e.target.value })}
+                      className="w-full bg-[#0a0f1e] border border-white/[0.06] rounded-xl px-4 py-2 text-[#f0f4ff] focus:outline-none focus:border-[#4361ee] transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-[#94a3c8] mb-1">Debit Amount (₹)</label>
+                    <input
+                      type="number"
+                      required
+                      min="0"
+                      value={formData.debitAmount}
+                      onChange={(e) => setFormData({ ...formData, debitAmount: e.target.value })}
+                      className="w-full bg-[#0a0f1e] border border-white/[0.06] rounded-xl px-4 py-2 text-[#f0f4ff] focus:outline-none focus:border-[#4361ee] transition-colors"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-medium text-[#94a3c8] mb-1">Credit Account</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Bank Account"
+                      value={formData.creditAccount}
+                      onChange={(e) => setFormData({ ...formData, creditAccount: e.target.value })}
+                      className="w-full bg-[#0a0f1e] border border-white/[0.06] rounded-xl px-4 py-2 text-[#f0f4ff] focus:outline-none focus:border-[#4361ee] transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-[#94a3c8] mb-1">Credit Amount (₹)</label>
+                    <input
+                      type="number"
+                      required
+                      min="0"
+                      value={formData.creditAmount}
+                      onChange={(e) => setFormData({ ...formData, creditAmount: e.target.value })}
+                      className="w-full bg-[#0a0f1e] border border-white/[0.06] rounded-xl px-4 py-2 text-[#f0f4ff] focus:outline-none focus:border-[#4361ee] transition-colors"
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="btn-primary w-full justify-center mt-2"
+                >
+                  {isSubmitting ? "Saving..." : "Save Entry"}
+                </button>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
