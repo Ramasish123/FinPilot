@@ -1,0 +1,62 @@
+"use client";
+
+import React from "react";
+import { motion } from "framer-motion";
+import { Building2, Link2, CheckCircle2, ArrowRight, RefreshCw, Settings } from "lucide-react";
+
+const containerVariants = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.08 } } };
+const itemVariants = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { duration: 0.5 } } };
+
+const erpSystems = [
+  { name: "Tally Prime", category: "Accounting", status: "connected" as const, lastSync: "2 min ago", modules: ["Ledger", "Vouchers", "Balance Sheet"], color: "from-[#4361ee] to-[#0ea5e9]" },
+  { name: "Zoho Books", category: "Accounting", status: "connected" as const, lastSync: "15 min ago", modules: ["Invoices", "Expenses", "Reports"], color: "from-[#06d6a0] to-[#10b981]" },
+  { name: "SAP Business One", category: "ERP", status: "available" as const, lastSync: "", modules: ["Finance", "Sales", "Inventory", "HR"], color: "from-[#f59e0b] to-[#f97316]" },
+  { name: "QuickBooks", category: "Accounting", status: "available" as const, lastSync: "", modules: ["Payroll", "Banking", "Invoicing"], color: "from-[#7c3aed] to-[#a855f7]" },
+  { name: "Oracle NetSuite", category: "ERP", status: "available" as const, lastSync: "", modules: ["Finance", "CRM", "Commerce", "HR"], color: "from-[#f43f5e] to-[#ec4899]" },
+  { name: "Microsoft Dynamics", category: "ERP", status: "available" as const, lastSync: "", modules: ["Finance", "Supply Chain", "HR"], color: "from-[#0ea5e9] to-[#06b6d4]" },
+];
+
+export default function ERPView() {
+  return (
+    <motion.div variants={containerVariants} initial="hidden" animate="show" className="p-6 space-y-6">
+      <motion.div variants={itemVariants}>
+        <h3 className="text-xl font-bold text-[#f0f4ff]">ERP Integrations</h3>
+        <p className="text-sm text-[#5a6a8a] mt-1">Connect your enterprise systems for automated data sync</p>
+      </motion.div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        {erpSystems.map((erp) => (
+          <motion.div key={erp.name} variants={itemVariants} whileHover={{ scale: 1.02 }} className="glass-card p-5 cursor-pointer">
+            <div className="flex items-start justify-between mb-4">
+              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${erp.color} flex items-center justify-center`}>
+                <Building2 className="w-5 h-5 text-white" />
+              </div>
+              {erp.status === "connected" ? (
+                <span className="badge badge-success text-[10px]"><CheckCircle2 className="w-3 h-3" />Connected</span>
+              ) : (
+                <span className="badge badge-info text-[10px]">Available</span>
+              )}
+            </div>
+            <h4 className="text-sm font-semibold text-[#f0f4ff] mb-0.5">{erp.name}</h4>
+            <p className="text-xs text-[#5a6a8a] mb-3">{erp.category}</p>
+            <div className="flex flex-wrap gap-1.5 mb-4">
+              {erp.modules.map((m) => (
+                <span key={m} className="text-[10px] px-2 py-0.5 rounded-lg bg-white/[0.03] border border-white/[0.06] text-[#94a3c8]">{m}</span>
+              ))}
+            </div>
+            {erp.status === "connected" ? (
+              <div className="flex items-center justify-between pt-3 border-t border-white/[0.04]">
+                <span className="text-[10px] text-[#5a6a8a]">Synced: {erp.lastSync}</span>
+                <button className="flex items-center gap-1 text-xs text-[#4361ee]"><RefreshCw className="w-3 h-3" />Sync</button>
+              </div>
+            ) : (
+              <button className="btn-primary w-full !text-xs flex items-center justify-center gap-1">
+                <Link2 className="w-3 h-3" />Connect
+              </button>
+            )}
+          </motion.div>
+        ))}
+      </div>
+    </motion.div>
+  );
+}
