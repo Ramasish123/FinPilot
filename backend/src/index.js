@@ -28,13 +28,13 @@ app.use(helmet());
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100,
+  max: 500,
   message: { error: "Too many requests, please try again later" },
 });
 app.use("/api/", limiter);
 
 // ==========================================
-// In-Memory Data Store (replace with DB)
+// In-Memory Data Store
 // ==========================================
 
 const users = [
@@ -75,10 +75,10 @@ const transactions = [
 ];
 
 const accounts = [
-  { id: "acc_001", userId: "usr_001", name: "HDFC Savings", type: "savings", balance: 847520, institution: "HDFC Bank", connected: true },
-  { id: "acc_002", userId: "usr_001", name: "ICICI Current", type: "current", balance: 2345000, institution: "ICICI Bank", connected: true },
-  { id: "acc_003", userId: "usr_001", name: "SBI Credit Card", type: "credit_card", balance: -67890, institution: "SBI Cards", connected: true },
-  { id: "acc_004", userId: "usr_001", name: "Zerodha Portfolio", type: "investment", balance: 1523400, institution: "Zerodha", connected: true },
+  { id: "acc_001", userId: "usr_001", name: "HDFC Savings", type: "savings", balance: 847520, institution: "HDFC Bank", connected: true, lastSync: "2 min ago" },
+  { id: "acc_002", userId: "usr_001", name: "ICICI Current", type: "current", balance: 2345000, institution: "ICICI Bank", connected: true, lastSync: "5 min ago" },
+  { id: "acc_003", userId: "usr_001", name: "SBI Credit Card", type: "credit_card", balance: -67890, institution: "SBI Cards", connected: true, lastSync: "10 min ago" },
+  { id: "acc_004", userId: "usr_001", name: "Zerodha Portfolio", type: "investment", balance: 1523400, institution: "Zerodha", connected: true, lastSync: "1 hr ago" },
 ];
 
 const loans = [
@@ -86,6 +86,39 @@ const loans = [
   { id: "loan_002", userId: "usr_001", name: "Car Loan - ICICI", type: "car", principal: 1200000, remaining: 456000, rate: 9.2, emi: 24800, nextDue: "2026-06-01", status: "active" },
   { id: "loan_003", userId: "usr_001", name: "Business Loan - SBI", type: "business", principal: 5000000, remaining: 3200000, rate: 11.5, emi: 115000, nextDue: "2026-06-10", status: "active" },
 ];
+
+const expenses = [
+  { id: "exp_001", userId: "usr_001", category: "Food & Dining", description: "Swiggy monthly total", amount: 12500, date: "2026-05-06", status: "tracked" },
+  { id: "exp_002", userId: "usr_001", category: "Entertainment", description: "Netflix Subscription", amount: 2499, date: "2026-05-05", status: "tracked" },
+  { id: "exp_003", userId: "usr_001", category: "Cloud Infrastructure", description: "AWS Hosting", amount: 89000, date: "2026-05-07", status: "tracked" },
+  { id: "exp_004", userId: "usr_001", category: "Transportation", description: "Uber India rides", amount: 15000, date: "2026-05-08", status: "tracked" },
+  { id: "exp_005", userId: "usr_001", category: "Shopping", description: "Amazon electronics", amount: 34500, date: "2026-05-10", status: "pending" },
+  { id: "exp_006", userId: "usr_001", category: "Healthcare", description: "Apollo Pharmacy", amount: 8750, date: "2026-05-11", status: "tracked" },
+];
+
+const incomeEntries = [
+  { id: "inc_001", userId: "usr_001", source: "Primary Salary", description: "TechNova Solutions Payroll", amount: 375000, date: "2026-05-01", recurring: true, status: "received" },
+  { id: "inc_002", userId: "usr_001", source: "Freelance", description: "Upwork Inc — Web Development", amount: 45000, date: "2026-05-03", recurring: false, status: "received" },
+  { id: "inc_003", userId: "usr_001", source: "Business Revenue", description: "CloudSync Technologies", amount: 200000, date: "2026-05-09", recurring: false, status: "received" },
+  { id: "inc_004", userId: "usr_001", source: "Business Revenue", description: "DataVerse Analytics", amount: 550000, date: "2026-05-14", recurring: false, status: "received" },
+];
+
+const journalEntries = [
+  { id: "JE001", userId: "usr_001", date: "2026-05-01", description: "Salary Payment Received", debitAccount: "Bank - HDFC", debitAmount: 375000, creditAccount: "Salary Income", creditAmount: 375000 },
+  { id: "JE002", userId: "usr_001", date: "2026-05-05", description: "Netflix Subscription", debitAccount: "Entertainment Expense", debitAmount: 2499, creditAccount: "Credit Card - SBI", creditAmount: 2499 },
+  { id: "JE003", userId: "usr_001", date: "2026-05-07", description: "AWS Cloud Hosting", debitAccount: "Infrastructure Expense", debitAmount: 89000, creditAccount: "Bank - ICICI", creditAmount: 89000 },
+  { id: "JE004", userId: "usr_001", date: "2026-05-09", description: "Client Payment - CloudSync", debitAccount: "Bank - ICICI", debitAmount: 200000, creditAccount: "Service Revenue", creditAmount: 200000 },
+  { id: "JE005", userId: "usr_001", date: "2026-05-12", description: "Mutual Fund Investment", debitAccount: "Investment - MF", debitAmount: 150000, creditAccount: "Bank - HDFC", creditAmount: 150000 },
+];
+
+const fraudAlerts = [
+  { id: "fraud_001", userId: "usr_001", type: "abnormal_amount", severity: "high", description: "Unusual spending spike — ₹12,500 at Swiggy in a single day (3x your average)", amount: 12500, date: "2026-05-06", status: "investigating" },
+  { id: "fraud_002", userId: "usr_001", type: "duplicate_invoice", severity: "critical", description: "Duplicate vendor payment detected — CloudSync Technologies billed twice for same service", amount: 200000, date: "2026-05-09", status: "open" },
+  { id: "fraud_003", userId: "usr_001", type: "suspicious_vendor", severity: "medium", description: "New vendor 'DataVerse Analytics' has similar name to existing vendor. Possible phishing.", amount: 550000, date: "2026-05-14", status: "open" },
+  { id: "fraud_004", userId: "usr_001", type: "round_amount", severity: "low", description: "Multiple round-figure transactions detected from same merchant category", amount: 150000, date: "2026-05-12", status: "resolved" },
+];
+
+const settings = {};
 
 // ==========================================
 // Auth Middleware
@@ -101,15 +134,6 @@ function authenticateToken(req, res, next) {
     req.user = user;
     next();
   });
-}
-
-function authorizeRoles(...roles) {
-  return (req, res, next) => {
-    if (!roles.includes(req.user.role)) {
-      return res.status(403).json({ error: "Insufficient permissions" });
-    }
-    next();
-  };
 }
 
 // ==========================================
@@ -131,14 +155,8 @@ app.post("/api/auth/login", async (req, res) => {
       { expiresIn: "24h" }
     );
 
-    const refreshToken = jwt.sign(
-      { id: user.id },
-      JWT_SECRET,
-      { expiresIn: "7d" }
-    );
-
     const { password: _, ...userWithoutPassword } = user;
-    res.json({ token, refreshToken, user: userWithoutPassword });
+    res.json({ token, user: userWithoutPassword });
   } catch (error) {
     res.status(500).json({ error: "Server error" });
   }
@@ -195,10 +213,22 @@ app.get("/api/transactions", authenticateToken, (req, res) => {
   res.json({ transactions: filtered, total, offset: Number(offset), limit: Number(limit) });
 });
 
-app.get("/api/transactions/:id", authenticateToken, (req, res) => {
-  const txn = transactions.find((t) => t.id === req.params.id && t.userId === req.user.id);
-  if (!txn) return res.status(404).json({ error: "Transaction not found" });
-  res.json(txn);
+app.post("/api/transactions", authenticateToken, (req, res) => {
+  const { amount, type, category, merchant, date, account, status = "completed" } = req.body;
+  const txn = {
+    id: `txn_${uuidv4().slice(0, 8)}`,
+    userId: req.user.id,
+    amount: Number(amount),
+    type,
+    category,
+    merchant,
+    date: date || new Date().toISOString().split("T")[0],
+    account: account || "HDFC Savings",
+    status,
+    aiCategory: category,
+  };
+  transactions.push(txn);
+  res.status(201).json(txn);
 });
 
 // ==========================================
@@ -211,6 +241,81 @@ app.get("/api/accounts", authenticateToken, (req, res) => {
   res.json({ accounts: userAccounts, totalBalance });
 });
 
+app.post("/api/accounts", authenticateToken, (req, res) => {
+  const { institution, type, name, accountNumber } = req.body;
+  const acc = {
+    id: `acc_${uuidv4().slice(0, 8)}`,
+    userId: req.user.id,
+    name: name || `${institution} ${type.charAt(0).toUpperCase() + type.slice(1)}`,
+    type,
+    balance: Math.floor(Math.random() * 500000) + 10000,
+    institution,
+    connected: true,
+    lastSync: "just now",
+    accountNumber: accountNumber ? `****${accountNumber.slice(-4)}` : undefined,
+  };
+  accounts.push(acc);
+  res.status(201).json(acc);
+});
+
+app.delete("/api/accounts/:id", authenticateToken, (req, res) => {
+  const idx = accounts.findIndex((a) => a.id === req.params.id && a.userId === req.user.id);
+  if (idx === -1) return res.status(404).json({ error: "Account not found" });
+  accounts.splice(idx, 1);
+  res.json({ success: true });
+});
+
+// ==========================================
+// EXPENSE ROUTES
+// ==========================================
+
+app.get("/api/expenses", authenticateToken, (req, res) => {
+  const userExpenses = expenses.filter((e) => e.userId === req.user.id);
+  const total = userExpenses.reduce((s, e) => s + e.amount, 0);
+  res.json({ expenses: userExpenses, total });
+});
+
+app.post("/api/expenses", authenticateToken, (req, res) => {
+  const { category, description, amount, date } = req.body;
+  const exp = {
+    id: `exp_${uuidv4().slice(0, 8)}`,
+    userId: req.user.id,
+    category,
+    description,
+    amount: Number(amount),
+    date: date || new Date().toISOString().split("T")[0],
+    status: "tracked",
+  };
+  expenses.push(exp);
+  res.status(201).json(exp);
+});
+
+// ==========================================
+// INCOME ROUTES
+// ==========================================
+
+app.get("/api/income", authenticateToken, (req, res) => {
+  const userIncome = incomeEntries.filter((i) => i.userId === req.user.id);
+  const total = userIncome.reduce((s, i) => s + i.amount, 0);
+  res.json({ income: userIncome, total });
+});
+
+app.post("/api/income", authenticateToken, (req, res) => {
+  const { source, description, amount, date, recurring = false } = req.body;
+  const inc = {
+    id: `inc_${uuidv4().slice(0, 8)}`,
+    userId: req.user.id,
+    source,
+    description,
+    amount: Number(amount),
+    date: date || new Date().toISOString().split("T")[0],
+    recurring,
+    status: "received",
+  };
+  incomeEntries.push(inc);
+  res.status(201).json(inc);
+});
+
 // ==========================================
 // LOAN ROUTES
 // ==========================================
@@ -220,6 +325,89 @@ app.get("/api/loans", authenticateToken, (req, res) => {
   const totalEMI = userLoans.reduce((s, l) => s + l.emi, 0);
   const totalOutstanding = userLoans.reduce((s, l) => s + l.remaining, 0);
   res.json({ loans: userLoans, totalEMI, totalOutstanding });
+});
+
+app.post("/api/loans/apply", authenticateToken, (req, res) => {
+  const { name, type, amount, rate, term } = req.body;
+  const principal = Number(amount);
+  const monthlyRate = Number(rate) / 100 / 12;
+  const months = Number(term);
+  const emi = Math.round((principal * monthlyRate * Math.pow(1 + monthlyRate, months)) / (Math.pow(1 + monthlyRate, months) - 1));
+
+  const loan = {
+    id: `loan_${uuidv4().slice(0, 8)}`,
+    userId: req.user.id,
+    name: name || `${type.charAt(0).toUpperCase() + type.slice(1)} Loan`,
+    type,
+    principal,
+    remaining: principal,
+    rate: Number(rate),
+    emi,
+    nextDue: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+    status: "active",
+  };
+  loans.push(loan);
+  res.status(201).json(loan);
+});
+
+app.patch("/api/loans/:id/payment", authenticateToken, (req, res) => {
+  const loan = loans.find((l) => l.id === req.params.id && l.userId === req.user.id);
+  if (!loan) return res.status(404).json({ error: "Loan not found" });
+
+  const paymentAmount = req.body.amount || loan.emi;
+  loan.remaining = Math.max(0, loan.remaining - paymentAmount);
+  if (loan.remaining === 0) loan.status = "paid";
+
+  // Move next due date forward
+  const nextDue = new Date(loan.nextDue);
+  nextDue.setMonth(nextDue.getMonth() + 1);
+  loan.nextDue = nextDue.toISOString().split("T")[0];
+
+  res.json(loan);
+});
+
+// ==========================================
+// ACCOUNTING ROUTES
+// ==========================================
+
+app.get("/api/accounting/entries", authenticateToken, (req, res) => {
+  const userEntries = journalEntries.filter((e) => e.userId === req.user.id);
+  res.json({ entries: userEntries });
+});
+
+app.post("/api/accounting/entries", authenticateToken, (req, res) => {
+  const { date, description, debitAccount, debitAmount, creditAccount, creditAmount } = req.body;
+  const entry = {
+    id: `JE${String(journalEntries.length + 1).padStart(3, "0")}`,
+    userId: req.user.id,
+    date: date || new Date().toISOString().split("T")[0],
+    description,
+    debitAccount,
+    debitAmount: Number(debitAmount),
+    creditAccount,
+    creditAmount: Number(creditAmount),
+  };
+  journalEntries.push(entry);
+  res.status(201).json(entry);
+});
+
+// ==========================================
+// FRAUD ROUTES
+// ==========================================
+
+app.get("/api/fraud/alerts", authenticateToken, (req, res) => {
+  const userAlerts = fraudAlerts.filter((a) => a.userId === req.user.id);
+  const riskScore = userAlerts.filter((a) => a.status !== "resolved").length > 2 ? 72 : 35;
+  res.json({ alerts: userAlerts, riskScore });
+});
+
+app.patch("/api/fraud/alerts/:id", authenticateToken, (req, res) => {
+  const alert = fraudAlerts.find((a) => a.id === req.params.id && a.userId === req.user.id);
+  if (!alert) return res.status(404).json({ error: "Alert not found" });
+  
+  const { status } = req.body;
+  if (status) alert.status = status;
+  res.json(alert);
 });
 
 // ==========================================
@@ -239,7 +427,6 @@ app.get("/api/tax/estimate", authenticateToken, (req, res) => {
   const totalDeductions = deductions.reduce((s, d) => s + d.amount, 0);
   const taxableIncome = totalIncome - totalDeductions;
 
-  // Simplified old regime calculation
   let tax = 0;
   if (taxableIncome > 1500000) tax += (taxableIncome - 1500000) * 0.3;
   if (taxableIncome > 1250000) tax += Math.min(taxableIncome - 1250000, 250000) * 0.25;
@@ -255,21 +442,6 @@ app.get("/api/tax/estimate", authenticateToken, (req, res) => {
     estimatedTax: Math.round(tax),
     regime: "old",
     savings: totalDeductions,
-  });
-});
-
-// ==========================================
-// FRAUD ROUTES
-// ==========================================
-
-app.get("/api/fraud/alerts", authenticateToken, (req, res) => {
-  res.json({
-    alerts: [
-      { id: "fraud_001", type: "abnormal_amount", severity: "high", description: "Unusual spending spike at Swiggy", amount: 12500, date: "2026-05-06", status: "investigating" },
-      { id: "fraud_002", type: "duplicate_invoice", severity: "critical", description: "Duplicate vendor payment detected", amount: 200000, date: "2026-05-09", status: "open" },
-      { id: "fraud_003", type: "suspicious_vendor", severity: "medium", description: "New vendor with similar name detected", amount: 45000, date: "2026-05-08", status: "open" },
-    ],
-    riskScore: 72,
   });
 });
 
@@ -290,7 +462,6 @@ app.get("/api/ai/insights", authenticateToken, (req, res) => {
 
 app.post("/api/ai/chat", authenticateToken, (req, res) => {
   const { message } = req.body;
-  // In production, this would call OpenAI/LangChain
   const responses = {
     default: "I've analyzed your financial data. Your current financial health score is 78/100 (B+). Your income is stable and growing. I recommend focusing on building your emergency fund and optimizing tax deductions. Would you like specific recommendations?",
   };
@@ -328,6 +499,92 @@ app.get("/api/reports", authenticateToken, (req, res) => {
 });
 
 // ==========================================
+// SETTINGS ROUTES
+// ==========================================
+
+app.get("/api/settings/profile", authenticateToken, (req, res) => {
+  const user = users.find((u) => u.id === req.user.id);
+  if (!user) return res.status(404).json({ error: "User not found" });
+  const { password: _, ...profile } = user;
+  res.json(profile);
+});
+
+app.put("/api/settings/profile", authenticateToken, (req, res) => {
+  const user = users.find((u) => u.id === req.user.id);
+  if (!user) return res.status(404).json({ error: "User not found" });
+
+  const { name, email, company } = req.body;
+  if (name) user.name = name;
+  if (email) user.email = email;
+  if (company) user.company = company;
+
+  const { password: _, ...profile } = user;
+  res.json(profile);
+});
+
+app.put("/api/settings/password", authenticateToken, async (req, res) => {
+  const user = users.find((u) => u.id === req.user.id);
+  if (!user) return res.status(404).json({ error: "User not found" });
+
+  const { currentPassword, newPassword } = req.body;
+  const valid = await bcrypt.compare(currentPassword, user.password);
+  if (!valid) return res.status(400).json({ error: "Current password is incorrect" });
+
+  user.password = await bcrypt.hash(newPassword, 10);
+  res.json({ success: true, message: "Password updated successfully" });
+});
+
+// ==========================================
+// EXPORT ROUTES
+// ==========================================
+
+app.get("/api/export/:type", authenticateToken, (req, res) => {
+  const { type } = req.params;
+  let csv = "";
+
+  switch (type) {
+    case "transactions": {
+      const data = transactions.filter((t) => t.userId === req.user.id);
+      csv = "Date,Merchant,Category,Type,Amount,Account,Status\n";
+      data.forEach((t) => {
+        csv += `${t.date},"${t.merchant}",${t.category},${t.type},${t.amount},${t.account},${t.status}\n`;
+      });
+      break;
+    }
+    case "expenses": {
+      const data = expenses.filter((e) => e.userId === req.user.id);
+      csv = "Date,Category,Description,Amount,Status\n";
+      data.forEach((e) => {
+        csv += `${e.date},${e.category},"${e.description}",${e.amount},${e.status}\n`;
+      });
+      break;
+    }
+    case "income": {
+      const data = incomeEntries.filter((i) => i.userId === req.user.id);
+      csv = "Date,Source,Description,Amount,Recurring,Status\n";
+      data.forEach((i) => {
+        csv += `${i.date},${i.source},"${i.description}",${i.amount},${i.recurring},${i.status}\n`;
+      });
+      break;
+    }
+    case "accounting": {
+      const data = journalEntries.filter((j) => j.userId === req.user.id);
+      csv = "ID,Date,Description,Debit Account,Debit Amount,Credit Account,Credit Amount\n";
+      data.forEach((j) => {
+        csv += `${j.id},${j.date},"${j.description}",${j.debitAccount},${j.debitAmount},${j.creditAccount},${j.creditAmount}\n`;
+      });
+      break;
+    }
+    default:
+      return res.status(400).json({ error: "Invalid export type" });
+  }
+
+  res.setHeader("Content-Type", "text/csv");
+  res.setHeader("Content-Disposition", `attachment; filename=${type}_export.csv`);
+  res.send(csv);
+});
+
+// ==========================================
 // HEALTH CHECK
 // ==========================================
 
@@ -335,55 +592,16 @@ app.get("/api/health", (req, res) => {
   res.json({
     status: "healthy",
     version: "1.0.0",
-    services: {
-      api: "online",
-      aiEngine: "online",
-      database: "online",
-      cache: "online",
-    },
+    services: { api: "online", aiEngine: "online", database: "online", cache: "online" },
     uptime: process.uptime(),
   });
 });
-
-// ==========================================
-// API Documentation
-// ==========================================
 
 app.get("/api", (req, res) => {
   res.json({
     name: "FinPilot AI API",
     version: "1.0.0",
     description: "AI-Powered Financial Operating System",
-    endpoints: {
-      auth: {
-        "POST /api/auth/login": "Login with email/password",
-        "POST /api/auth/signup": "Register new user",
-      },
-      transactions: {
-        "GET /api/transactions": "List transactions (auth required)",
-        "GET /api/transactions/:id": "Get transaction details",
-      },
-      accounts: {
-        "GET /api/accounts": "List connected accounts",
-      },
-      loans: {
-        "GET /api/loans": "List loans & EMI",
-      },
-      tax: {
-        "GET /api/tax/estimate": "Get tax estimation",
-      },
-      fraud: {
-        "GET /api/fraud/alerts": "Get fraud alerts",
-      },
-      ai: {
-        "GET /api/ai/insights": "Get AI insights",
-        "POST /api/ai/chat": "Chat with AI assistant",
-        "GET /api/ai/forecast": "Get financial forecasts",
-      },
-      reports: {
-        "GET /api/reports": "List generated reports",
-      },
-    },
   });
 });
 

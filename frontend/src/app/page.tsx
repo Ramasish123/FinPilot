@@ -1,9 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AuthPage from "@/components/AuthPage";
 import Sidebar from "@/components/Sidebar";
 import TopBar from "@/components/TopBar";
+import { ToastProvider } from "@/components/Toast";
+import { getToken, getStoredUser, setToken, setStoredUser, logout as doLogout } from "@/lib/api";
 import DashboardView from "@/components/views/DashboardView";
 import TransactionsView from "@/components/views/TransactionsView";
 import AccountsView from "@/components/views/AccountsView";
@@ -41,15 +43,52 @@ const tabConfig: Record<string, { title: string; subtitle: string }> = {
 export default function Home() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activeTab, setActiveTab] = useState("dashboard");
+  const [user, setUser] = useState<any>(null);
+  const [checkingAuth, setCheckingAuth] = useState(true);
+
+  // Check for existing session on mount
+  useEffect(() => {
+    const token = getToken();
+    const storedUser = getStoredUser();
+    if (token && storedUser) {
+      setIsAuthenticated(true);
+      setUser(storedUser);
+    }
+    setCheckingAuth(false);
+  }, []);
+
+  const handleLogin = (token: string, userData: any) => {
+    setToken(token);
+    setStoredUser(userData);
+    setIsAuthenticated(true);
+    setUser(userData);
+  };
+
+  const handleLogout = () => {
+    doLogout();
+    setIsAuthenticated(false);
+    setUser(null);
+    setActiveTab("dashboard");
+  };
+
   const config = tabConfig[activeTab] || tabConfig.dashboard;
 
+  // Show nothing while checking auth to prevent flash
+  if (checkingAuth) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-[#4361ee]/30 border-t-[#4361ee] rounded-full animate-spin" />
+      </div>
+    );
+  }
+
   if (!isAuthenticated) {
-    return <AuthPage onLogin={() => setIsAuthenticated(true)} />;
+    return <AuthPage onLogin={handleLogin} />;
   }
 
   const renderView = () => {
     switch (activeTab) {
-      case "dashboard": return <DashboardView />;
+      case "dashboard": return <DashboardView onNavigate={setActiveTab} />;
       case "transactions": return <TransactionsView />;
       case "accounts": return <AccountsView />;
       case "income": return <IncomeView />;
@@ -59,24 +98,32 @@ export default function Home() {
       case "tax": return <TaxView />;
       case "fraud": return <FraudView />;
       case "forecasting": return <ForecastingView />;
-      case "strategy": return <StrategyView />;
+      case "strategy": return <StrategyView onNavigate={setActiveTab} />;
       case "chatbot": return <ChatbotView />;
       case "reports": return <ReportsView />;
       case "erp": return <ERPView />;
       case "settings": return <SettingsView />;
-      default: return <DashboardView />;
+      default: return <DashboardView onNavigate={setActiveTab} />;
     }
   };
 
   return (
-    <div className="flex min-h-screen relative z-10">
-      <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <TopBar title={config.title} subtitle={config.subtitle} />
-        <main className="flex-1 overflow-y-auto">
-          {renderView()}
-        </main>
+    <ToastProvider>
+      <div className="flex min-h-screen relative z-10">
+        <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <TopBar
+            title={config.title}
+            subtitle={config.subtitle}
+            user={user}
+            onLogout={handleLogout}
+            onNavigate={setActiveTab}
+          />
+          <main className="flex-1 overflow-y-auto">
+            {renderView()}
+          </main>
+        </div>
       </div>
-    </div>
+    </ToastProvider>
   );
 }
