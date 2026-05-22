@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FileText, Download, Calendar, TrendingUp, Receipt, ShieldCheck, BarChart3, FileSpreadsheet, X } from "lucide-react";
 import { api } from "@/lib/api";
 import { useToast } from "@/components/Toast";
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
 
 const containerVariants = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.08 } } };
 const itemVariants = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { duration: 0.5 } } };
@@ -53,18 +55,172 @@ export default function ReportsView() {
     }
   };
 
-  const handleDownload = (format: string, reportName: string) => {
-    const content = `Simulated ${format} report data for ${reportName}`;
-    const blob = new Blob([content], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${reportName.replace(/\s+/g, "_")}.${format.toLowerCase()}`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    success(`${format} downloaded successfully`);
+  const handleDownload = async (format: string, reportName: string) => {
+    info(`Generating ${format} for ${reportName}...`);
+    try {
+      let csvContent = "";
+      let pdfDoc = new jsPDF();
+      
+      const isProfitAndLoss = reportName.toLowerCase().includes("profit") || reportName.toLowerCase().includes("p&l");
+      const isBalanceSheet = reportName.toLowerCase().includes("balance");
+      const isCashFlow = reportName.toLowerCase().includes("cash");
+      const isTaxReport = reportName.toLowerCase().includes("tax");
+
+      if (isProfitAndLoss) {
+        const res = await api.get("/transactions");
+        const txns = res.transactions || [];
+        const income = txns.filter((t: any) => t.type === "credit").reduce((s: number, t: any) => s + t.amount, 0);
+        const expenses = txns.filter((t: any) => t.type === "debit").reduce((s: number, t: any) => s + t.amount, 0);
+        const net = income - expenses;
+
+        if (format === "CSV") {
+          csvContent = `Category,Amount\nTotal Income,${income}\nTotal Expenses,${expenses}\nNet Profit,${net}\n\n`;
+          csvContent += `Date,Merchant,Category,Amount\n`;
+          txns.forEach((t: any) => {
+            csvContent += `${t.date},"${t.merchant}",${t.category},${t.type === 'credit' ? '+' : '-'}${t.amount}\n`;
+          });
+        } else {
+          pdfDoc.setFontSize(20);
+          pdfDoc.text("Profit & Loss Statement", 14, 22);
+          pdfDoc.setFontSize(12);
+          pdfDoc.text(`Generated: ${new Date().toLocaleDateString()}`, 14, 30);
+          
+          autoTable(pdfDoc, {
+            startY: 40,
+            head: [['Metric', 'Amount']],
+            body: [
+              ['Total Income', `Rs. ${income}`],
+              ['Total Expenses', `Rs. ${expenses}`],
+              ['Net Profit', `Rs. ${net}`],
+            ],
+          });
+
+          autoTable(pdfDoc, {
+            startY: (pdfDoc as any).lastAutoTable.finalY + 10,
+            head: [['Date', 'Merchant', 'Category', 'Amount']],
+            body: txns.map((t: any) => [
+              t.date, t.merchant, t.category, `${t.type === 'credit' ? '+' : '-'}${t.amount}`
+            ]),
+          });
+        }
+      } else if (isBalanceSheet) {
+        const [accRes, loanRes] = await Promise.all([
+          api.get("/accounts"),
+          api.get("/loans")
+        ]);
+        const assets = accRes.accounts || [];
+        const totalAssets = accRes.totalBalance || 0;
+        const liabilities = loanRes.loans || [];
+        const totalLiabilities = loanRes.totalOutstanding || 0;
+        const equity = totalAssets - totalLiabilities;
+
+        if (format === "CSV") {
+          csvContent = `Type,Name,Amount\n`;
+          assets.forEach((a: any) => csvContent += `Asset,"${a.name}",${a.balance}\n`);
+          liabilities.forEach((l: any) => csvContent += `Liability,"${l.name}",-${l.remaining}\n`);
+          csvContent += `\nSummary,Amount\nTotal Assets,${totalAssets}\nTotal Liabilities,${totalLiabilities}\nTotal Equity,${equity}\n`;
+        } else {
+          pdfDoc.setFontSize(20);
+          pdfDoc.text("Balance Sheet", 14, 22);
+          
+          autoTable(pdfDoc, {
+            startY: 35,
+            head: [['Assets', 'Amount']],
+            body: assets.map((a: any) => [a.name, `Rs. ${a.balance}`]),
+            foot: [['Total Assets', `Rs. ${totalAssets}`]],
+          });
+
+          autoTable(pdfDoc, {
+            startY: (pdfDoc as any).lastAutoTable.finalY + 10,
+            head: [['Liabilities', 'Amount']],
+            body: liabilities.map((l: any) => [l.name, `Rs. ${l.remaining}`]),
+            foot: [['Total Liabilities', `Rs. ${totalLiabilities}`]],
+          });
+
+          autoTable(pdfDoc, {
+            startY: (pdfDoc as any).lastAutoTable.finalY + 10,
+            head: [['Equity', 'Amount']],
+            body: [['Total Equity', `Rs. ${equity}`]],
+          });
+        }
+      } else if (isCashFlow) {
+        const res = await api.get("/transactions");
+        const txns = res.transactions || [];
+        const inflows = txns.filter((t: any) => t.type === "credit");
+        const outflows = txns.filter((t: any) => t.type === "debit");
+        const totalIn = inflows.reduce((s: number, t: any) => s + t.amount, 0);
+        const totalOut = outflows.reduce((s: number, t: any) => s + t.amount, 0);
+        const netCash = totalIn - totalOut;
+
+        if (format === "CSV") {
+          csvContent = `Type,Amount\nCash Inflows,${totalIn}\nCash Outflows,${totalOut}\nNet Cash Flow,${netCash}\n`;
+        } else {
+          pdfDoc.setFontSize(20);
+          pdfDoc.text("Cash Flow Statement", 14, 22);
+          autoTable(pdfDoc, {
+            startY: 35,
+            head: [['Cash Flow', 'Amount']],
+            body: [
+              ['Cash Inflows', `Rs. ${totalIn}`],
+              ['Cash Outflows', `Rs. ${totalOut}`],
+              ['Net Cash Flow', `Rs. ${netCash}`]
+            ],
+          });
+        }
+      } else if (isTaxReport) {
+        const taxRes = await api.get("/tax/estimate");
+        if (format === "CSV") {
+          csvContent = `Metric,Amount\nTotal Income,${taxRes.totalIncome}\nTaxable Income,${taxRes.taxableIncome}\nEstimated Tax,${taxRes.estimatedTax}\nTax Savings,${taxRes.savings}\n\nDeductions:\n`;
+          taxRes.deductions.forEach((d: any) => csvContent += `"${d.name}",${d.amount}\n`);
+        } else {
+          pdfDoc.setFontSize(20);
+          pdfDoc.text("Tax Filing Report", 14, 22);
+          autoTable(pdfDoc, {
+            startY: 35,
+            head: [['Metric', 'Amount']],
+            body: [
+              ['Total Income', `Rs. ${taxRes.totalIncome}`],
+              ['Taxable Income', `Rs. ${taxRes.taxableIncome}`],
+              ['Estimated Tax', `Rs. ${taxRes.estimatedTax}`],
+              ['Tax Savings', `Rs. ${taxRes.savings}`],
+            ],
+          });
+          autoTable(pdfDoc, {
+            startY: (pdfDoc as any).lastAutoTable.finalY + 10,
+            head: [['Deduction Name', 'Amount']],
+            body: taxRes.deductions.map((d: any) => [d.name, `Rs. ${d.amount}`]),
+          });
+        }
+      } else {
+        // Generic fallback
+        if (format === "CSV") {
+          csvContent = `Report Name,Format,Status\n"${reportName}",${format},Generated`;
+        } else {
+          pdfDoc.setFontSize(20);
+          pdfDoc.text(reportName, 14, 22);
+          pdfDoc.setFontSize(12);
+          pdfDoc.text("This custom report was dynamically generated.", 14, 30);
+        }
+      }
+
+      // Finalize and download
+      if (format === "CSV") {
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${reportName.replace(/\s+/g, "_")}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      } else {
+        pdfDoc.save(`${reportName.replace(/\s+/g, "_")}.pdf`);
+      }
+      success(`${format} report generated successfully!`);
+    } catch (err: any) {
+      error(`Failed to generate ${format} report`, err.message);
+    }
   };
 
   const handleGenerateReport = (e: React.FormEvent) => {
@@ -132,7 +288,7 @@ export default function ReportsView() {
                 </div>
                 <div className="flex gap-2">
                   <button onClick={(e) => { e.stopPropagation(); handleDownload("PDF", report.name); }} className="btn-secondary !py-1.5 !text-xs flex items-center gap-1 flex-1 justify-center"><Download className="w-3 h-3" />PDF</button>
-                  <button onClick={(e) => { e.stopPropagation(); handleDownload("Excel", report.name); }} className="btn-secondary !py-1.5 !text-xs flex items-center gap-1 flex-1 justify-center"><Download className="w-3 h-3" />Excel</button>
+                  <button onClick={(e) => { e.stopPropagation(); handleDownload("CSV", report.name); }} className="btn-secondary !py-1.5 !text-xs flex items-center gap-1 flex-1 justify-center"><Download className="w-3 h-3" />CSV</button>
                 </div>
               </motion.div>
             );

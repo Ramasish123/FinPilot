@@ -46,42 +46,83 @@ const categoryColors: Record<string, { text: string; bg: string; border: string 
   strategy: { text: "text-[#7c3aed]", bg: "bg-[#7c3aed]/10", border: "border-[#7c3aed]/20" },
 };
 
-const corporateStrategies = [
-  {
-    title: "Optimize Marketing ROI",
-    description: "Marketing spend increased 35% but conversions improved only 3%. AI recommends reallocating 40% of Google Ads budget to LinkedIn targeting for B2B clients.",
-    impact: "Save ₹5.2L/quarter",
-    category: "Cost Optimization",
-    icon: BarChart3,
-    color: "from-[#4361ee] to-[#0ea5e9]",
-  },
-  {
-    title: "Hiring Recommendation",
-    description: "Revenue per employee increased 12% QoQ. Current team is at 92% capacity. AI recommends hiring 3 senior developers and 1 sales lead by Q3.",
-    impact: "Projected +₹18L revenue",
-    category: "Team Growth",
-    icon: Users,
-    color: "from-[#06d6a0] to-[#10b981]",
-  },
-  {
-    title: "Expansion Analysis",
-    description: "Bangalore market shows 34% higher demand for your services. Competitors are underserving this segment. Recommended entry cost: ₹12L.",
-    impact: "New market: ₹45L potential",
-    category: "Growth Strategy",
-    icon: Rocket,
-    color: "from-[#7c3aed] to-[#a855f7]",
-  },
-  {
-    title: "Pricing Optimization",
-    description: "Price elasticity analysis shows 15% price increase on premium tier will only reduce subscribers by 3%, netting ₹8L additional annual revenue.",
-    impact: "+₹8L annual revenue",
-    category: "Revenue",
-    icon: Target,
-    color: "from-[#f59e0b] to-[#f97316]",
-  },
-];
+import { api } from "@/lib/api";
 
 export default function StrategyView({ onNavigate }: { onNavigate?: (tab: string) => void }) {
+  const [insights, setInsights] = React.useState<any[]>([]);
+  const [strategies, setStrategies] = React.useState<any[]>([]);
+  const [isAnalyzing, setIsAnalyzing] = React.useState(true);
+
+  React.useEffect(() => {
+    async function fetchAiStrategy() {
+      try {
+        setIsAnalyzing(true);
+        // 1. Fetch live data context from Node.js backend
+        const [accountsData, txnsData, tax] = await Promise.all([
+          api.get("/accounts").catch(() => null),
+          api.get("/transactions").catch(() => null),
+          api.get("/tax/estimate").catch(() => null)
+        ]);
+
+        const accounts = accountsData?.accounts || [];
+        const txns = txnsData?.transactions || [];
+
+        let contextString = "USER FINANCIAL CONTEXT:\\n";
+        
+        if (accounts.length > 0) {
+          contextString += "\\nAccounts:\\n";
+          accounts.forEach((acc: any) => {
+            contextString += `- ${acc.name || acc.institution} ${acc.type}: ₹${acc.balance.toLocaleString('en-IN')}\\n`;
+          });
+        }
+        
+        if (txns.length > 0) {
+          contextString += "\\nRecent Transactions:\\n";
+          txns.slice(0, 10).forEach((t: any) => {
+            contextString += `- ${t.date}: ${t.merchant} (₹${t.amount.toLocaleString('en-IN')}) [${t.type}]\\n`;
+          });
+        }
+
+        if (tax) {
+          contextString += "\\nTax Profile:\\n";
+          if (tax.totalIncome !== undefined) contextString += `- Total Income: ₹${tax.totalIncome.toLocaleString('en-IN')}\\n`;
+          if (tax.taxableIncome !== undefined) contextString += `- Taxable Income: ₹${tax.taxableIncome.toLocaleString('en-IN')}\\n`;
+          if (tax.estimatedTax !== undefined) contextString += `- Estimated Tax: ₹${tax.estimatedTax.toLocaleString('en-IN')}\\n`;
+          if (tax.regime) contextString += `- Regime: ${tax.regime}\\n`;
+        }
+
+        // 2. Send context to AI microservice
+        const response = await fetch("http://localhost:8000/api/ai/strategy", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: "Generate strategy", user_id: "usr_001", context: contextString }),
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          setInsights(data.insights || []);
+          
+          // Map backend category strings to icons/colors for strategies
+          const mappedStrategies = (data.strategies || []).map((s: any) => ({
+            ...s,
+            icon: s.category.toLowerCase().includes("cost") ? BarChart3 :
+                  s.category.toLowerCase().includes("team") ? Users :
+                  s.category.toLowerCase().includes("revenue") ? Target : Rocket,
+            color: s.category.toLowerCase().includes("cost") ? "from-[#4361ee] to-[#0ea5e9]" :
+                   s.category.toLowerCase().includes("team") ? "from-[#06d6a0] to-[#10b981]" :
+                   s.category.toLowerCase().includes("revenue") ? "from-[#f59e0b] to-[#f97316]" :
+                   "from-[#7c3aed] to-[#a855f7]"
+          }));
+          setStrategies(mappedStrategies);
+        }
+      } catch (err) {
+        console.error("Failed to fetch strategy", err);
+      } finally {
+        setIsAnalyzing(false);
+      }
+    }
+    fetchAiStrategy();
+  }, []);
   return (
     <motion.div variants={containerVariants} initial="hidden" animate="show" className="p-6 space-y-6">
       {/* Header */}
@@ -111,12 +152,24 @@ export default function StrategyView({ onNavigate }: { onNavigate?: (tab: string
         <motion.div variants={itemVariants} className="flex items-center gap-2 mb-4">
           <Lightbulb className="w-4 h-4 text-[#f59e0b]" />
           <h3 className="text-sm font-semibold text-[#f0f4ff]">Priority Insights</h3>
-          <span className="badge badge-danger text-[10px] !py-0.5">
-            {mockInsights.filter((i) => i.priority === "high").length} High Priority
-          </span>
+          {!isAnalyzing && (
+            <span className="badge badge-danger text-[10px] !py-0.5">
+              {insights.filter((i: any) => i.priority === "high").length} High Priority
+            </span>
+          )}
         </motion.div>
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {mockInsights.map((insight) => {
+        
+        {isAnalyzing ? (
+          <div className="flex flex-col items-center justify-center py-12 glass-card">
+            <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 2, ease: "linear" }}>
+              <Sparkles className="w-8 h-8 text-[#06d6a0] mb-4" />
+            </motion.div>
+            <h3 className="text-sm font-bold text-[#f0f4ff]">AI is analyzing your live data...</h3>
+            <p className="text-xs text-[#94a3c8] mt-2">Processing transactions, identifying patterns, generating insights</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            {insights.map((insight: any) => {
             const Icon = categoryIcons[insight.category] || Lightbulb;
             const colors = categoryColors[insight.category] || categoryColors.strategy;
 
@@ -153,7 +206,8 @@ export default function StrategyView({ onNavigate }: { onNavigate?: (tab: string
               </motion.div>
             );
           })}
-        </div>
+          </div>
+        )}
       </div>
 
       {/* Corporate Strategy */}
@@ -163,7 +217,7 @@ export default function StrategyView({ onNavigate }: { onNavigate?: (tab: string
           <h3 className="text-sm font-semibold text-[#f0f4ff]">Corporate Strategy Recommendations</h3>
         </motion.div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {corporateStrategies.map((strategy) => {
+          {isAnalyzing ? null : strategies.map((strategy: any) => {
             const Icon = strategy.icon;
             return (
               <motion.div

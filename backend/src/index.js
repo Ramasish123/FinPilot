@@ -606,6 +606,75 @@ app.get("/api", (req, res) => {
 });
 
 // ==========================================
+// AI Background Simulation Loop
+// ==========================================
+setInterval(async () => {
+  try {
+    const response = await fetch("http://ai-services:8000/api/ai/simulate-event");
+    if (response.ok) {
+      const event = await response.json();
+      const dateStr = new Date().toISOString().split('T')[0];
+      
+      // 1. Create Transaction
+      const newTxn = {
+        id: "sim_" + Date.now(),
+        userId: "usr_001",
+        amount: event.amount,
+        type: event.type,
+        category: event.category,
+        merchant: event.merchant,
+        date: dateStr,
+        account: event.type === 'credit' ? "ICICI Current" : "HDFC Savings",
+        status: "completed",
+        aiCategory: "Live AI Simulation"
+      };
+      
+      // 2. Add to global transactions (at the top)
+      transactions.unshift(newTxn);
+      
+      // 3. Update Account Balances
+      const accountToUpdate = accounts.find(a => a.name === newTxn.account);
+      if (accountToUpdate) {
+        if (event.type === 'credit') {
+          accountToUpdate.balance += event.amount;
+        } else {
+          accountToUpdate.balance -= event.amount;
+        }
+        accountToUpdate.lastSync = "Just now";
+      }
+      
+      // 4. Add to specific module (Expense or Income)
+      if (event.type === 'debit') {
+        expenses.unshift({
+          id: "exp_" + Date.now(),
+          userId: "usr_001",
+          category: event.category,
+          description: event.description || event.merchant,
+          amount: event.amount,
+          date: dateStr,
+          status: "tracked"
+        });
+      } else {
+        incomeEntries.unshift({
+          id: "inc_" + Date.now(),
+          userId: "usr_001",
+          source: event.category,
+          description: event.description || event.merchant,
+          amount: event.amount,
+          date: dateStr,
+          recurring: false,
+          status: "received"
+        });
+      }
+      
+      console.log(`[AI Simulator] Processed ${event.type.toUpperCase()}: ${event.amount} from ${event.merchant}`);
+    }
+  } catch (error) {
+    console.error("[AI Simulator Error] Failed to fetch simulated event:", error.message);
+  }
+}, 8000); // Run every 8 seconds
+
+// ==========================================
 // Start Server
 // ==========================================
 

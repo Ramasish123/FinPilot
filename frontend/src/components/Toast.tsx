@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle2, XCircle, AlertTriangle, Info, X } from "lucide-react";
+import { useNotificationStore } from "@/lib/store";
 
 type ToastType = "success" | "error" | "warning" | "info";
 
@@ -49,6 +50,10 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   const addToast = useCallback((type: ToastType, title: string, message?: string) => {
     const id = `toast_${Date.now()}_${Math.random().toString(36).slice(2)}`;
     setToasts((prev) => [...prev, { id, type, title, message }]);
+    
+    // Add to persistent notifications store
+    useNotificationStore.getState().addNotification(title);
+    
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
     }, 4000);

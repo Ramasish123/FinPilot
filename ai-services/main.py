@@ -9,6 +9,14 @@ from pydantic import BaseModel
 from typing import Optional, List
 import uvicorn
 from datetime import datetime
+from openai import OpenAI
+import os
+
+GROQ_API_KEY = "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"
+client = OpenAI(
+    api_key=GROQ_API_KEY,
+    base_url="https://api.groq.com/openai/v1",
+)
 
 app = FastAPI(
     title="FinPilot AI — AI Microservice",
@@ -203,28 +211,172 @@ async def generate_forecast(req: ForecastRequest):
 async def chat_with_ai(req: ChatRequest):
     """AI Agent: Conversational financial assistant using RAG"""
     
-    # In production: LangChain + Vector DB retrieval + OpenAI
-    message_lower = req.message.lower()
+    system_prompt = (
+        "You are FinPilot AI, a highly sophisticated financial advisor and CFO. "
+        "You analyze the user's finances and provide brief, actionable, and data-driven insights. "
+        "Your responses should be concise, professional, and directly address the user's query."
+    )
     
-    if "afford" in message_lower or "loan" in message_lower:
-        response = "Based on your income of ₹4.2L/month and existing EMIs of ₹2.12L, you have ₹1.26L available for a new EMI. At 8.5% for 20 years, you could afford up to ₹52L in home loans. I recommend maintaining total EMIs below 40% of income."
+    print("--- Received Context from Frontend ---", flush=True)
+    print(req.context, flush=True)
+    print("--------------------------------------", flush=True)
+    
+    if req.context:
+        system_prompt += f"\n\nHere is the user's live financial data for context. Base your answers on this data:\n{req.context}"
+    
+    try:
+        completion = client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": req.message}
+            ],
+            temperature=0.5,
+            max_tokens=1024,
+        )
+        response_text = completion.choices[0].message.content
         agent = "Strategy Agent"
-    elif "tax" in message_lower:
-        response = "You have ₹85,000 unused in Section 80C. Investing in ELSS before March will save ₹26,520 in taxes. Additionally, NPS investment of ₹50,000 under 80CCD(1B) saves another ₹15,600. Total potential savings: ₹42,120."
-        agent = "Tax Agent"
-    elif "profit" in message_lower or "revenue" in message_lower:
-        response = "Your revenue grew 8% QoQ but profits dropped 12.3%. Root causes: Marketing spend up 35% (conversions only +3%), Infrastructure costs up 18%, and hiring costs. I recommend optimizing ad spend and implementing AWS Reserved Instances."
-        agent = "Strategy Agent"
-    else:
-        response = "Your financial health score is 78/100 (B+). Key areas: Income stability is excellent (92/100), but your emergency fund only covers 2.3 months (target: 6 months). I recommend automating ₹25,000/month savings transfer."
-        agent = "Income Agent"
+    except Exception as e:
+        print(f"Groq API Error: {e}")
+        response_text = "I'm currently unable to connect to my AI engine. Please try again later."
+        agent = "System"
     
     return ChatResponse(
-        response=response,
-        sources=["transaction_db", "tax_records", "investment_portfolio"],
-        confidence=0.92,
+        response=response_text,
+        sources=["FinPilot Knowledge Base"],
+        confidence=0.95,
         agent=agent,
     )
+
+@app.post("/api/ai/strategy")
+async def generate_strategy(req: ChatRequest):
+    """AI Agent: Generates JSON strategy based on user financial context"""
+    
+    system_prompt = (
+        "You are FinPilot AI, a highly sophisticated financial advisor and CFO. "
+        "You analyze the user's finances and provide actionable, data-driven insights. "
+        "You MUST respond ONLY with a valid JSON object. Do not include any markdown formatting like ```json. "
+        "The JSON object must have exactly two keys: 'insights' and 'strategies'. "
+        "'insights' should be a list of 3-4 objects, each with keys: "
+        "  - 'id' (string, e.g., 'ins_001')"
+        "  - 'category' (string, one of: 'savings', 'spending', 'investment', 'tax', 'risk', 'strategy')"
+        "  - 'title' (string, short title)"
+        "  - 'description' (string, detailed analysis)"
+        "  - 'impact' (string, e.g., 'Save ₹8,000/month')"
+        "  - 'priority' (string, 'high', 'medium', or 'low')"
+        "'strategies' should be a list of 2-3 corporate strategy objects, each with keys: "
+        "  - 'title' (string, short title)"
+        "  - 'description' (string, detailed strategic recommendation)"
+        "  - 'impact' (string, e.g., 'Projected +₹18L revenue')"
+        "  - 'category' (string, e.g., 'Cost Optimization', 'Team Growth')"
+    )
+    
+    if req.context:
+        system_prompt += f"\n\nHere is the user's live financial data for context. Base your analysis STRICTLY on this data:\n{req.context}"
+    
+    try:
+        completion = client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            response_format={"type": "json_object"},
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": "Analyze my data and generate the JSON insights and strategies."}
+            ],
+            temperature=0.3,
+            max_tokens=1500,
+        )
+        response_text = completion.choices[0].message.content
+        import json
+        return json.loads(response_text)
+    except Exception as e:
+        print(f"Groq API Error: {e}")
+        return {
+            "insights": [],
+            "strategies": []
+        }
+
+@app.post("/api/ai/cashflow")
+async def generate_cashflow(req: ChatRequest):
+    """AI Agent: Generates JSON cash flow based on user financial context"""
+    
+    system_prompt = (
+        "You are FinPilot AI, a sophisticated financial data analyst. "
+        "Analyze the provided transaction context and generate an exact 6-month cash flow model. "
+        "You MUST respond ONLY with a valid JSON object. Do not include any markdown formatting like ```json. "
+        "The JSON object must have exactly one key: 'cashflow'. "
+        "'cashflow' should be a list of exactly 6 objects, representing the last 6 months including the current month. "
+        "Each object must have exactly these keys: "
+        "  - 'month' (string, e.g., 'Jan', 'Feb', 'Mar') "
+        "  - 'inflow' (integer, sum of credit amounts) "
+        "  - 'outflow' (integer, sum of debit amounts) "
+    )
+    
+    if req.context:
+        system_prompt += f"\n\nHere is the user's recent transaction data:\n{req.context}"
+    
+    try:
+        completion = client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            response_format={"type": "json_object"},
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": "Analyze my data and generate the JSON cash flow array."}
+            ],
+            temperature=0.2,
+            max_tokens=800,
+        )
+        response_text = completion.choices[0].message.content
+        import json
+        return json.loads(response_text)
+    except Exception as e:
+        print(f"Groq API Error: {e}")
+        return {
+            "cashflow": [
+                {"month": "Error", "inflow": 0, "outflow": 0}
+            ]
+        }
+
+@app.get("/api/ai/simulate-event")
+async def simulate_event():
+    """AI Agent: Generates a realistic live financial event as JSON"""
+    
+    system_prompt = (
+        "You are FinPilot AI, a financial simulation engine. "
+        "Generate a single, highly realistic new financial transaction that a startup or professional might experience today. "
+        "Make it either an income (credit) or an expense (debit). "
+        "You MUST respond ONLY with a valid JSON object. Do not include any markdown formatting like ```json. "
+        "The JSON object must have exactly these keys: "
+        "  - 'type' (string, either 'credit' or 'debit')"
+        "  - 'amount' (integer, between 1000 and 150000)"
+        "  - 'category' (string, e.g., 'Food & Dining', 'Cloud Infrastructure', 'Salary', 'Service Revenue')"
+        "  - 'merchant' (string, e.g., 'Uber', 'AWS', 'Client X', 'Razorpay', 'Swiggy')"
+        "  - 'description' (string, a short realistic description)"
+    )
+    
+    try:
+        completion = client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            response_format={"type": "json_object"},
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": "Generate a new simulated transaction."}
+            ],
+            temperature=0.8,
+            max_tokens=200,
+        )
+        response_text = completion.choices[0].message.content
+        import json
+        return json.loads(response_text)
+    except Exception as e:
+        print(f"Groq API Error: {e}")
+        return {
+            "type": "debit",
+            "amount": 2500,
+            "category": "Infrastructure",
+            "merchant": "Fallback Cloud",
+            "description": "Simulation fallback"
+        }
+
 
 # ==========================================
 # Tax Optimization

@@ -16,6 +16,7 @@ import {
   RotateCcw,
 } from "lucide-react";
 import { ChatMessage } from "@/lib/data";
+import { api } from "@/lib/api";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -157,6 +158,53 @@ export default function ChatbotView() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const [aiContext, setAiContext] = useState<string>("");
+
+  useEffect(() => {
+    // Fetch user context for AI
+    async function fetchContext() {
+      try {
+        const [accountsData, txnsData, tax] = await Promise.all([
+          api.get("/accounts").catch(() => null),
+          api.get("/transactions").catch(() => null),
+          api.get("/tax/estimate").catch(() => null)
+        ]);
+
+        const accounts = accountsData?.accounts || [];
+        const txns = txnsData?.transactions || [];
+
+        let contextString = "USER FINANCIAL CONTEXT:\\n";
+        
+        if (accounts.length > 0) {
+          contextString += "\\nAccounts:\\n";
+          accounts.forEach((acc: any) => {
+            contextString += `- ${acc.name || acc.institution} ${acc.type}: ₹${acc.balance.toLocaleString('en-IN')}\\n`;
+          });
+        }
+        
+        if (txns.length > 0) {
+          contextString += "\\nRecent Transactions:\\n";
+          txns.slice(0, 10).forEach((t: any) => {
+            contextString += `- ${t.date}: ${t.merchant} (₹${t.amount.toLocaleString('en-IN')}) [${t.type}]\\n`;
+          });
+        }
+
+        if (tax) {
+          contextString += "\\nTax Profile:\\n";
+          if (tax.totalIncome !== undefined) contextString += `- Total Income: ₹${tax.totalIncome.toLocaleString('en-IN')}\\n`;
+          if (tax.taxableIncome !== undefined) contextString += `- Taxable Income: ₹${tax.taxableIncome.toLocaleString('en-IN')}\\n`;
+          if (tax.estimatedTax !== undefined) contextString += `- Estimated Tax: ₹${tax.estimatedTax.toLocaleString('en-IN')}\\n`;
+          if (tax.regime) contextString += `- Regime: ${tax.regime}\\n`;
+        }
+        
+        setAiContext(contextString);
+      } catch (err) {
+        console.error("Failed to fetch context", err);
+      }
+    }
+    fetchContext();
+  }, []);
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -184,7 +232,7 @@ export default function ChatbotView() {
       const response = await fetch("http://localhost:8000/api/ai/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: messageText, user_id: "usr_001" }),
+        body: JSON.stringify({ message: messageText, user_id: "usr_001", context: aiContext }),
       });
       
       if (!response.ok) {

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Bell,
@@ -9,8 +10,10 @@ import {
   Sun,
   Moon,
   ChevronDown,
+  X,
 } from "lucide-react";
 import { mockUser } from "@/lib/data";
+import { useNotificationStore } from "@/lib/store";
 
 interface TopBarProps {
   title: string;
@@ -20,11 +23,7 @@ interface TopBarProps {
   onNavigate?: (tab: string) => void;
 }
 
-const mockNotifications = [
-  { id: 1, title: "New login from unknown device", time: "10m ago", read: false },
-  { id: 2, title: "Monthly report is ready", time: "1h ago", read: false },
-  { id: 3, title: "Goal 'Emergency Fund' reached!", time: "2d ago", read: true },
-];
+
 
 const dummySearchResults = [
   { id: 1, title: "Q1 Revenue Report", type: "Document" },
@@ -43,6 +42,12 @@ export default function TopBar({ title, subtitle, user, onLogout, onNavigate }: 
   const [showProfile, setShowProfile] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [showAllNotificationsModal, setShowAllNotificationsModal] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  const notifications = useNotificationStore((state) => state.notifications);
+  const markAsRead = useNotificationStore((state) => state.markAsRead);
+  const unreadCount = notifications.filter(n => !n.read).length;
 
   const notificationsRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
@@ -61,6 +66,7 @@ export default function TopBar({ title, subtitle, user, onLogout, onNavigate }: 
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
+    setMounted(true);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
@@ -140,9 +146,11 @@ export default function TopBar({ title, subtitle, user, onLogout, onNavigate }: 
             className="w-9 h-9 rounded-xl bg-[#151d35] border border-white/[0.06] flex items-center justify-center relative"
           >
             <Bell className="w-4 h-4 text-[#94a3c8]" />
-            <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#f43f5e] rounded-full text-[9px] text-white flex items-center justify-center font-bold">
-              3
-            </span>
+            {unreadCount > 0 && (
+              <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#f43f5e] rounded-full text-[9px] text-white flex items-center justify-center font-bold">
+                {unreadCount}
+              </span>
+            )}
           </motion.button>
 
           <AnimatePresence>
@@ -159,15 +167,22 @@ export default function TopBar({ title, subtitle, user, onLogout, onNavigate }: 
                   <h3 className="text-sm font-semibold text-[#f0f4ff]">Notifications</h3>
                 </div>
                 <div className="flex flex-col">
-                  {mockNotifications.map((notif) => (
-                    <div key={notif.id} className={`px-4 py-3 hover:bg-white/[0.03] cursor-pointer flex flex-col gap-1 border-b border-white/[0.02] last:border-0 ${!notif.read ? 'bg-white/[0.02]' : ''}`}>
+                  {notifications.slice(0, 4).map((notif) => (
+                    <div 
+                      key={notif.id} 
+                      onClick={() => markAsRead(notif.id)}
+                      className={`px-4 py-3 hover:bg-white/[0.03] cursor-pointer flex flex-col gap-1 border-b border-white/[0.02] last:border-0 ${!notif.read ? 'bg-white/[0.02]' : ''}`}
+                    >
                       <span className={`text-sm ${!notif.read ? 'text-[#f0f4ff] font-medium' : 'text-[#94a3c8]'}`}>{notif.title}</span>
                       <span className="text-[10px] text-[#5a6a8a]">{notif.time}</span>
                     </div>
                   ))}
+                  {notifications.length === 0 && (
+                    <div className="px-4 py-3 text-sm text-[#5a6a8a] text-center">No notifications</div>
+                  )}
                 </div>
                 <div className="px-4 pt-2 mt-1 border-t border-white/[0.06]">
-                  <button className="text-xs text-[#4361ee] hover:text-[#f0f4ff] w-full text-center py-1">View all</button>
+                  <button onClick={() => { setShowNotifications(false); setShowAllNotificationsModal(true); }} className="text-xs text-[#4361ee] hover:text-[#f0f4ff] w-full text-center py-1">View all</button>
                 </div>
               </motion.div>
             )}
@@ -230,6 +245,59 @@ export default function TopBar({ title, subtitle, user, onLogout, onNavigate }: 
           </AnimatePresence>
         </div>
       </div>
+
+      {/* All Notifications Modal */}
+      {mounted && createPortal(
+        <AnimatePresence>
+          {showAllNotificationsModal && (
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+              <motion.div 
+                initial={{ opacity: 0 }} 
+                animate={{ opacity: 1 }} 
+                exit={{ opacity: 0 }} 
+                className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+                onClick={() => setShowAllNotificationsModal(false)}
+              />
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                className="glass-card w-full max-w-2xl p-6 relative flex flex-col max-h-[80vh] z-10"
+              >
+                <button 
+                  onClick={() => setShowAllNotificationsModal(false)}
+                  className="absolute top-4 right-4 text-[#5a6a8a] hover:text-[#f0f4ff] transition-colors p-1"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+                <h3 className="text-xl font-bold text-[#f0f4ff] mb-6 flex items-center gap-2">
+                  <Bell className="w-5 h-5" /> All Notifications
+                </h3>
+                
+                <div className="flex-1 overflow-y-auto space-y-3 pr-2">
+                  {notifications.map((notif) => (
+                    <div 
+                      key={notif.id} 
+                      onClick={() => markAsRead(notif.id)}
+                      className={`p-4 rounded-xl border border-white/[0.06] cursor-pointer transition-colors ${!notif.read ? 'bg-[#1e293b]/50 hover:bg-[#1e293b]/70' : 'bg-transparent hover:bg-white/[0.02]'}`}
+                    >
+                      <div className="flex justify-between items-start mb-1">
+                        <h4 className={`text-sm ${!notif.read ? 'text-[#f0f4ff] font-semibold' : 'text-[#94a3c8] font-medium'}`}>{notif.title}</h4>
+                        <span className="text-xs text-[#5a6a8a]">{notif.time}</span>
+                      </div>
+                      <p className="text-xs text-[#94a3c8]">{notif.read ? "Marked as read." : "Action required."}</p>
+                    </div>
+                  ))}
+                  {notifications.length === 0 && (
+                    <div className="p-4 text-center text-[#5a6a8a]">You're all caught up!</div>
+                  )}
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </header>
   );
 }

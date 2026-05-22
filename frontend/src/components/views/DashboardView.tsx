@@ -59,7 +59,7 @@ const itemVariants: Variants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeInOut" } },
 };
 
-const metricCards = [
+const initialMetricCards = [
   {
     label: "Total Revenue",
     value: 4718230,
@@ -132,24 +132,85 @@ function CustomTooltip({ active, payload, label }: any) {
 }
 
 export default function DashboardView({ onNavigate }: { onNavigate?: (tab: string) => void }) {
+  const [liveMetrics, setLiveMetrics] = useState(initialMetricCards);
   const [recentTransactions, setRecentTransactions] = useState<any[]>(mockTransactions.slice(0, 7));
+  const [cashFlowData, setCashFlowData] = useState<any[]>(mockCashFlowData);
+  const [isAnalyzingCashFlow, setIsAnalyzingCashFlow] = useState(true);
   const { error } = useToast();
 
+  // True Real-Time Backend Polling
   useEffect(() => {
+    let isInitialFetch = true;
+    
     async function fetchDashboardData() {
       try {
-        const data = await api.get("/transactions?limit=7");
-        if (Array.isArray(data)) {
-          setRecentTransactions(data);
-        } else if (data.transactions) {
-          setRecentTransactions(data.transactions);
+        const [txnsResponse, accountsResponse] = await Promise.all([
+          api.get("/transactions?limit=20").catch(() => null),
+          api.get("/accounts").catch(() => null)
+        ]);
+        
+        let txns: any[] = [];
+        if (txnsResponse) {
+          txns = Array.isArray(txnsResponse) ? txnsResponse : txnsResponse.transactions || [];
+          setRecentTransactions(txns.slice(0, 7));
+          
+          // Dynamically calculate metrics based on ALL fetched transactions
+          const totalRevenue = txns.filter(t => t.type === 'credit').reduce((sum, t) => sum + t.amount, 0);
+          const totalExpenses = txns.filter(t => t.type === 'debit').reduce((sum, t) => sum + t.amount, 0);
+          const netProfit = totalRevenue - totalExpenses;
+          
+          setLiveMetrics(prev => prev.map(card => {
+            if (card.label === "Total Revenue") return { ...card, value: totalRevenue };
+            if (card.label === "Total Expenses") return { ...card, value: totalExpenses };
+            if (card.label === "Net Profit") return { ...card, value: netProfit };
+            // Let the original CashFlow logic or backend handle cash flow
+            return card;
+          }));
+        }
+
+        if (isInitialFetch) {
+          // Prepare context for AI Cash Flow
+          const accounts = accountsResponse?.accounts || [];
+          let contextString = "TRANSACTION CONTEXT:\\n";
+          if (accounts.length > 0) {
+            contextString += "\\nAccounts:\\n";
+            accounts.forEach((acc: any) => {
+              contextString += `- ${acc.name || acc.institution} ${acc.type}: ₹${acc.balance.toLocaleString('en-IN')}\\n`;
+            });
+          }
+          if (txns.length > 0) {
+            contextString += "\\nTransactions:\\n";
+            txns.forEach((t: any) => {
+              contextString += `- ${t.date}: ${t.merchant} (₹${t.amount.toLocaleString('en-IN')}) [${t.type}]\\n`;
+            });
+          }
+
+          // Fetch AI Cash Flow Analysis ONCE on load
+          const response = await fetch("http://localhost:8000/api/ai/cashflow", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: "Generate cash flow", user_id: "usr_001", context: contextString }),
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            if (data.cashflow && data.cashflow.length > 0) {
+              setCashFlowData(data.cashflow);
+            }
+          }
+          setIsAnalyzingCashFlow(false);
+          isInitialFetch = false;
         }
       } catch (err) {
-        error("Failed to load recent transactions");
+        console.error("Dashboard poll error:", err);
       }
     }
+    
     fetchDashboardData();
+    const interval = setInterval(fetchDashboardData, 3000); // Poll every 3 seconds
+    return () => clearInterval(interval);
   }, []);
+
 
   return (
     <motion.div
@@ -160,7 +221,7 @@ export default function DashboardView({ onNavigate }: { onNavigate?: (tab: strin
     >
       {/* Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-        {metricCards.map((card) => {
+        {liveMetrics.map((card) => {
           const Icon = card.icon;
           return (
             <motion.div
@@ -352,18 +413,34 @@ export default function DashboardView({ onNavigate }: { onNavigate?: (tab: strin
 
         {/* Cash Flow */}
         <motion.div variants={itemVariants} className="glass-card p-5">
-          <h3 className="text-sm font-semibold text-[#f0f4ff] mb-1">Cash Flow</h3>
+          <div className="flex items-center justify-between mb-1">
+            <h3 className="text-sm font-semibold text-[#f0f4ff]">Cash Flow</h3>
+            {isAnalyzingCashFlow && (
+              <span className="flex items-center gap-1.5 text-[10px] text-[#06d6a0] bg-[#06d6a0]/10 px-2 py-0.5 rounded border border-[#06d6a0]/20">
+                <Sparkles className="w-3 h-3 animate-pulse" /> AI Processing
+              </span>
+            )}
+          </div>
           <p className="text-xs text-[#5a6a8a] mb-4">Inflow vs Outflow</p>
-          <ResponsiveContainer width="100%" height={220}>
-            <BarChart data={mockCashFlowData} barGap={4}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-              <XAxis dataKey="month" tick={{ fill: "#5a6a8a", fontSize: 11 }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fill: "#5a6a8a", fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={(v) => formatCurrencyShort(v)} />
-              <Tooltip content={<CustomTooltip />} />
-              <Bar dataKey="inflow" fill="#4361ee" radius={[4, 4, 0, 0]} name="Inflow" />
-              <Bar dataKey="outflow" fill="#f43f5e" radius={[4, 4, 0, 0]} name="Outflow" opacity={0.7} />
-            </BarChart>
-          </ResponsiveContainer>
+          {isAnalyzingCashFlow ? (
+            <div className="flex flex-col items-center justify-center h-[220px]">
+              <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 2, ease: "linear" }}>
+                <Sparkles className="w-6 h-6 text-[#06d6a0] mb-3" />
+              </motion.div>
+              <p className="text-xs text-[#94a3c8]">Analyzing transactions...</p>
+            </div>
+          ) : (
+            <ResponsiveContainer width="100%" height={220}>
+              <BarChart data={cashFlowData} barGap={4}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
+                <XAxis dataKey="month" tick={{ fill: "#5a6a8a", fontSize: 11 }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fill: "#5a6a8a", fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={(v) => formatCurrencyShort(v)} />
+                <Tooltip content={<CustomTooltip />} />
+                <Bar dataKey="inflow" fill="#4361ee" radius={[4, 4, 0, 0]} name="Inflow" />
+                <Bar dataKey="outflow" fill="#f43f5e" radius={[4, 4, 0, 0]} name="Outflow" opacity={0.7} />
+              </BarChart>
+            </ResponsiveContainer>
+          )}
         </motion.div>
 
         {/* Income Sources */}
