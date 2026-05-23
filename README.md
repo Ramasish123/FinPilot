@@ -14,30 +14,36 @@
 
 ## 🌟 Features
 
-### Core AI Agents
-| Agent | Function |
-|-------|----------|
-| 🧠 **Income Agent** | Auto-detects salary, freelance, business, rental & investment income |
-| 💰 **Expense Agent** | AI categorization with emotional/wasteful spending alerts |
-| 📊 **Tax Agent** | Tax estimation, slab analysis, deduction optimization |
-| 🔍 **Audit Agent** | Fraud detection, duplicate invoices, suspicious patterns |
-| 📈 **Forecast Agent** | Revenue, expense, savings & bankruptcy risk prediction |
-| 🎯 **Strategy Agent** | CFO-level insights, pricing, hiring & expansion analysis |
+### 🧠 Core AI Agents
+FinPilot's intelligence is powered by 6 specialized AI agents working together:
+- **Income Agent**: Auto-detects and classifies salary, freelance, business, rental, and investment income streams.
+- **Expense Agent**: Categorizes expenses automatically and provides emotional/wasteful spending alerts to help users save.
+- **Tax Agent**: Performs real-time tax estimation, slab analysis, and offers strategies for maximum deduction optimization under both old and new regimes.
+- **Audit Agent**: Acts as an automated auditor to detect fraud, duplicate invoices, and suspicious spending patterns.
+- **Forecast Agent**: Uses advanced time-series forecasting to predict future revenue, expenses, savings trajectories, and potential bankruptcy risks.
+- **Strategy Agent**: Delivers CFO-level strategic insights on pricing, hiring, and expansion for businesses, and personalized wealth strategies for individuals.
 
-### Platform Modules
-- ✅ **Authentication** — JWT, OAuth2, Role-based access (7 roles)
-- ✅ **Bank Integration** — Connect savings, current, credit cards, wallets
-- ✅ **Transaction Engine** — AI-categorized with NLP classification
-- ✅ **Accounting Engine** — Double-entry with journal, ledger, trial balance, P&L
-- ✅ **Taxation Engine** — Old/New regime, deduction tracking, filing reminders
-- ✅ **Loan & EMI Engine** — Debt tracking, prepayment simulation, refinancing
-- ✅ **Fraud Detection** — Anomaly detection with risk scoring
-- ✅ **AI Forecasting** — Prophet + LSTM time-series predictions
-- ✅ **AI CFO Strategy** — Strategic recommendations for individuals & corporations
-- ✅ **AI Chatbot** — RAG-powered conversational finance assistant
-- ✅ **Report Generation** — P&L, Balance Sheet, Cash Flow, Tax reports
-- ✅ **ERP Integration** — SAP, Tally, Zoho, QuickBooks connectors
-- ✅ **OCR Pipeline** — Invoice, receipt, bank statement extraction
+### 🏢 Platform Modules
+A complete suite of financial tools built for scale and accuracy:
+- **Authentication & Security**: Role-based access control (7 distinct roles), JWT/OAuth2 login, and AES-256 encryption.
+- **Bank Integration**: Securely connect savings, current accounts, credit cards, and digital wallets.
+- **Transaction Engine**: Process transactions with high accuracy using NLP classification for auto-categorization.
+- **Accounting Engine**: Professional-grade double-entry accounting featuring automated journal entries, ledger, trial balance, and P&L.
+- **Taxation Engine**: Track deductions, simulate tax liabilities, and get automated filing reminders.
+- **Loan & EMI Engine**: Track debt, simulate prepayment scenarios, and evaluate refinancing options.
+- **Fraud Detection**: Proactive anomaly detection system with risk scoring for all transactions.
+- **AI Forecasting**: Prophet + LSTM-based time-series predictions for hyper-accurate financial modeling.
+- **AI CFO Strategy**: Automated generation of strategic recommendations for both individuals and corporations.
+- **AI Chatbot**: A RAG-powered conversational finance assistant that can answer queries about your financial data.
+- **Report Generation**: Export comprehensive P&L, Balance Sheet, Cash Flow, and Tax reports in multiple formats.
+- **ERP Integration**: Seamlessly connect with enterprise software like SAP, Tally, Zoho, and QuickBooks.
+- **OCR Pipeline**: Extract line-item data from invoices, receipts, and bank statements automatically.
+
+### 🎨 Design & Experience
+- **Dark Mode Toggle**: Seamlessly switch between light and premium dark interfaces based on user preference.
+- **Glassmorphism UI**: Modern frosted glass card effects and layered interfaces.
+- **Dynamic Visualizations**: Interactive Recharts for intuitive financial data analysis.
+- **Fluid Animations**: Smooth micro-animations powered by Framer Motion to enhance the user experience.
 
 ---
 
