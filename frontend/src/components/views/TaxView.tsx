@@ -92,14 +92,14 @@ export default function TaxView() {
           <motion.div variants={itemVariants} className="glass-card metric-card blue p-4">
             <div className="flex items-center gap-2 mb-2">
               <IndianRupee className="w-4 h-4 text-[#4361ee]" />
-              <p className="text-xs text-[#5a6a8a]">Total Income</p>
+              <p className="text-xs text-[var(--color-text-muted)]">Total Income</p>
             </div>
-            <p className="text-2xl font-bold text-[#f0f4ff]">{formatCurrency(taxEstimate.totalIncome)}</p>
+            <p className="text-2xl font-bold text-[var(--color-text-primary)]">{formatCurrency(taxEstimate.totalIncome)}</p>
           </motion.div>
           <motion.div variants={itemVariants} className="glass-card metric-card green p-4">
             <div className="flex items-center gap-2 mb-2">
               <ShieldCheck className="w-4 h-4 text-[#06d6a0]" />
-              <p className="text-xs text-[#5a6a8a]">Deductions Claimed</p>
+              <p className="text-xs text-[var(--color-text-muted)]">Deductions Claimed</p>
             </div>
             <p className="text-2xl font-bold text-[#06d6a0]">
               {formatCurrency(taxEstimate.deductions.reduce((s, d) => s + d.amount, 0))}
@@ -108,14 +108,14 @@ export default function TaxView() {
           <motion.div variants={itemVariants} className="glass-card metric-card amber p-4">
             <div className="flex items-center gap-2 mb-2">
               <Calculator className="w-4 h-4 text-[#f59e0b]" />
-              <p className="text-xs text-[#5a6a8a]">Estimated Tax</p>
+              <p className="text-xs text-[var(--color-text-muted)]">Estimated Tax</p>
             </div>
             <p className="text-2xl font-bold text-[#f59e0b]">{formatCurrency(taxEstimate.estimatedTax)}</p>
           </motion.div>
           <motion.div variants={itemVariants} className="glass-card metric-card violet p-4">
             <div className="flex items-center gap-2 mb-2">
               <TrendingDown className="w-4 h-4 text-[#7c3aed]" />
-              <p className="text-xs text-[#5a6a8a]">Tax Savings</p>
+              <p className="text-xs text-[var(--color-text-muted)]">Tax Savings</p>
             </div>
             <p className="text-2xl font-bold text-[#7c3aed]">{formatCurrency(taxEstimate.savings)}</p>
           </motion.div>
@@ -124,13 +124,13 @@ export default function TaxView() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Tax Slab Breakdown */}
         <motion.div variants={itemVariants} className="glass-card p-5">
-          <h3 className="text-sm font-semibold text-[#f0f4ff] mb-1">Tax Slab Breakdown</h3>
-          <p className="text-xs text-[#5a6a8a] mb-4">New Regime — FY 2025-26</p>
+          <h3 className="text-sm font-semibold text-[var(--color-text-primary)] mb-1">Tax Slab Breakdown</h3>
+          <p className="text-xs text-[var(--color-text-muted)] mb-4">New Regime — FY 2025-26</p>
           <ResponsiveContainer width="100%" height={250}>
             <BarChart data={taxBreakdownData} layout="vertical">
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" horizontal={false} />
-              <XAxis type="number" tick={{ fill: "#5a6a8a", fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}K`} />
-              <YAxis type="category" dataKey="slab" tick={{ fill: "#94a3c8", fontSize: 10 }} axisLine={false} tickLine={false} width={100} />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-glass-border)" horizontal={false} />
+              <XAxis type="number" tick={{ fill: "var(--color-text-muted)", fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}K`} />
+              <YAxis type="category" dataKey="slab" tick={{ fill: "var(--color-text-secondary)", fontSize: 10 }} axisLine={false} tickLine={false} width={100} />
               <Tooltip formatter={(value) => formatCurrency(Number(value ?? 0))} contentStyle={{ background: "#151d35", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, fontSize: 12, color: "#f0f4ff" }} />
               <Bar dataKey="amount" radius={[0, 4, 4, 0]} name="Tax">
                 {taxBreakdownData.map((entry, index) => (
@@ -143,8 +143,8 @@ export default function TaxView() {
 
         {/* Deductions */}
         <motion.div variants={itemVariants} className="glass-card p-5">
-          <h3 className="text-sm font-semibold text-[#f0f4ff] mb-1">Deductions Summary</h3>
-          <p className="text-xs text-[#5a6a8a] mb-4">Claimed under Old Regime</p>
+          <h3 className="text-sm font-semibold text-[var(--color-text-primary)] mb-1">Deductions Summary</h3>
+          <p className="text-xs text-[var(--color-text-muted)] mb-4">Claimed under Old Regime</p>
           <div className="flex justify-center mb-4">
             <ResponsiveContainer width={160} height={160}>
               <PieChart>
@@ -161,9 +161,9 @@ export default function TaxView() {
               <div key={d.name} className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full" style={{ background: deductionPieData[i]?.color }} />
-                  <span className="text-xs text-[#94a3c8]">{d.name}</span>
+                  <span className="text-xs text-[var(--color-text-secondary)]">{d.name}</span>
                 </div>
-                <span className="text-xs font-semibold text-[#f0f4ff]">{formatCurrency(d.amount)}</span>
+                <span className="text-xs font-semibold text-[var(--color-text-primary)]">{formatCurrency(d.amount)}</span>
               </div>
             ))}
           </div>
@@ -174,12 +174,12 @@ export default function TaxView() {
       <motion.div variants={itemVariants} className="glass-card p-5">
         <div className="flex items-center gap-2 mb-4">
           <Lightbulb className="w-4 h-4 text-[#f59e0b]" />
-          <h3 className="text-sm font-semibold text-[#f0f4ff]">AI Tax Optimization Suggestions</h3>
+          <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">AI Tax Optimization Suggestions</h3>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="p-4 rounded-xl bg-gradient-to-br from-[#4361ee]/10 to-[#4361ee]/5 border border-[#4361ee]/15">
-            <h4 className="text-xs font-semibold text-[#f0f4ff] mb-2">Invest in ELSS</h4>
-            <p className="text-[11px] text-[#94a3c8] mb-2">
+            <h4 className="text-xs font-semibold text-[var(--color-text-primary)] mb-2">Invest in ELSS</h4>
+            <p className="text-[11px] text-[var(--color-text-secondary)] mb-2">
               You have ₹85,000 remaining in 80C limit. Investing in tax-saving ELSS funds before March will save ₹26,520.
             </p>
             <button
@@ -191,8 +191,8 @@ export default function TaxView() {
             </button>
           </div>
           <div className="p-4 rounded-xl bg-gradient-to-br from-[#06d6a0]/10 to-[#06d6a0]/5 border border-[#06d6a0]/15">
-            <h4 className="text-xs font-semibold text-[#f0f4ff] mb-2">NPS Additional Benefit</h4>
-            <p className="text-[11px] text-[#94a3c8] mb-2">
+            <h4 className="text-xs font-semibold text-[var(--color-text-primary)] mb-2">NPS Additional Benefit</h4>
+            <p className="text-[11px] text-[var(--color-text-secondary)] mb-2">
               You can claim an additional ₹50,000 under 80CCD(1B) for NPS investment, saving ₹15,600 in taxes.
             </p>
             <button
@@ -204,8 +204,8 @@ export default function TaxView() {
             </button>
           </div>
           <div className="p-4 rounded-xl bg-gradient-to-br from-[#f59e0b]/10 to-[#f59e0b]/5 border border-[#f59e0b]/15">
-            <h4 className="text-xs font-semibold text-[#f0f4ff] mb-2">Regime Comparison</h4>
-            <p className="text-[11px] text-[#94a3c8] mb-2">
+            <h4 className="text-xs font-semibold text-[var(--color-text-primary)] mb-2">Regime Comparison</h4>
+            <p className="text-[11px] text-[var(--color-text-secondary)] mb-2">
               Old Regime saves you ₹1,95,000 more than New Regime with your current deductions. Recommended: Old Regime.
             </p>
             <button
@@ -222,7 +222,7 @@ export default function TaxView() {
         <div className="mt-4 pt-4 border-t border-white/[0.04]">
           <div className="flex items-center gap-2 mb-3">
             <Calendar className="w-4 h-4 text-[#0ea5e9]" />
-            <h4 className="text-xs font-semibold text-[#f0f4ff]">Upcoming Tax Deadlines</h4>
+            <h4 className="text-xs font-semibold text-[var(--color-text-primary)]">Upcoming Tax Deadlines</h4>
           </div>
           <div className="flex flex-wrap gap-3">
             {[
@@ -233,11 +233,11 @@ export default function TaxView() {
             ].map((item) => (
               <div key={item.event} className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.04] flex items-center gap-3">
                 <div className="text-center">
-                  <p className="text-xs font-bold text-[#f0f4ff]">{item.date.split(" ")[0]}</p>
-                  <p className="text-[10px] text-[#5a6a8a]">{item.date.split(" ").slice(1).join(" ")}</p>
+                  <p className="text-xs font-bold text-[var(--color-text-primary)]">{item.date.split(" ")[0]}</p>
+                  <p className="text-[10px] text-[var(--color-text-muted)]">{item.date.split(" ").slice(1).join(" ")}</p>
                 </div>
                 <div className="w-px h-6 bg-white/[0.06]" />
-                <p className="text-xs text-[#94a3c8]">{item.event}</p>
+                <p className="text-xs text-[var(--color-text-secondary)]">{item.event}</p>
               </div>
             ))}
           </div>
@@ -254,19 +254,19 @@ export default function TaxView() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               className="glass-card w-full max-w-md p-6 relative border border-white/10 shadow-2xl"
-              style={{ background: "#0f1428" }}
+              
             >
               <button
                 onClick={() => setActiveModal(null)}
                 className="absolute top-4 right-4 p-1 rounded-lg hover:bg-white/10 transition-colors"
               >
-                <X className="w-5 h-5 text-[#94a3c8]" />
+                <X className="w-5 h-5 text-[var(--color-text-secondary)]" />
               </button>
               
               {activeModal === "elss" && (
                 <>
-                  <h3 className="text-xl font-bold text-[#f0f4ff] mb-2">Invest in ELSS</h3>
-                  <p className="text-sm text-[#94a3c8] mb-6">
+                  <h3 className="text-xl font-bold text-[var(--color-text-primary)] mb-2">Invest in ELSS</h3>
+                  <p className="text-sm text-[var(--color-text-secondary)] mb-6">
                     You have ₹85,000 remaining in your 80C limit. Investing in tax-saving ELSS funds before March will save ₹26,520 in taxes. ELSS funds have a lock-in period of 3 years.
                   </p>
                   <button
@@ -280,8 +280,8 @@ export default function TaxView() {
 
               {activeModal === "nps" && (
                 <>
-                  <h3 className="text-xl font-bold text-[#f0f4ff] mb-2">NPS Additional Benefit</h3>
-                  <p className="text-sm text-[#94a3c8] mb-6">
+                  <h3 className="text-xl font-bold text-[var(--color-text-primary)] mb-2">NPS Additional Benefit</h3>
+                  <p className="text-sm text-[var(--color-text-secondary)] mb-6">
                     You can claim an additional ₹50,000 under Section 80CCD(1B) for NPS investment. This is over and above the ₹1.5L limit under 80C, saving you an extra ₹15,600.
                   </p>
                   <button
@@ -295,8 +295,8 @@ export default function TaxView() {
 
               {activeModal === "regime" && (
                 <>
-                  <h3 className="text-xl font-bold text-[#f0f4ff] mb-2">Regime Comparison</h3>
-                  <p className="text-sm text-[#94a3c8] mb-6">
+                  <h3 className="text-xl font-bold text-[var(--color-text-primary)] mb-2">Regime Comparison</h3>
+                  <p className="text-sm text-[var(--color-text-secondary)] mb-6">
                     Based on your declared deductions, the Old Regime saves you ₹1,95,000 more than the New Regime. Would you like to switch your default preference to the Old Regime?
                   </p>
                   <button

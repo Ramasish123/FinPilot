@@ -82,30 +82,30 @@ export default function FraudView() {
           <motion.div variants={itemVariants} className="glass-card metric-card rose p-4">
             <div className="flex items-center gap-2 mb-2">
               <ShieldAlert className="w-4 h-4 text-[#f43f5e]" />
-              <p className="text-xs text-[#5a6a8a]">Total Alerts</p>
+              <p className="text-xs text-[var(--color-text-muted)]">Total Alerts</p>
             </div>
-            <p className="text-2xl font-bold text-[#f0f4ff]">{alerts.length}</p>
+            <p className="text-2xl font-bold text-[var(--color-text-primary)]">{alerts.length}</p>
           </motion.div>
           <motion.div variants={itemVariants} className="glass-card metric-card amber p-4">
             <div className="flex items-center gap-2 mb-2">
               <AlertTriangle className="w-4 h-4 text-[#f59e0b]" />
-              <p className="text-xs text-[#5a6a8a]">Open</p>
+              <p className="text-xs text-[var(--color-text-muted)]">Open</p>
             </div>
             <p className="text-2xl font-bold text-[#f59e0b]">{openCount}</p>
           </motion.div>
           <motion.div variants={itemVariants} className="glass-card metric-card blue p-4">
             <div className="flex items-center gap-2 mb-2">
               <AlertOctagon className="w-4 h-4 text-[#f43f5e]" />
-              <p className="text-xs text-[#5a6a8a]">Critical/High</p>
+              <p className="text-xs text-[var(--color-text-muted)]">Critical/High</p>
             </div>
             <p className="text-2xl font-bold text-[#f43f5e]">{criticalCount}</p>
           </motion.div>
           <motion.div variants={itemVariants} className="glass-card metric-card green p-4">
             <div className="flex items-center gap-2 mb-2">
               <ShieldCheck className="w-4 h-4 text-[#10b981]" />
-              <p className="text-xs text-[#5a6a8a]">Risk Score</p>
+              <p className="text-xs text-[var(--color-text-muted)]">Risk Score</p>
             </div>
-            <p className="text-2xl font-bold text-[#f0f4ff]">72<span className="text-sm text-[#5a6a8a]">/100</span></p>
+            <p className="text-2xl font-bold text-[var(--color-text-primary)]">72<span className="text-sm text-[var(--color-text-muted)]">/100</span></p>
             <span className="badge badge-warning text-[10px] !py-0 mt-1">Moderate</span>
           </motion.div>
         </div>
@@ -131,7 +131,7 @@ export default function FraudView() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <h4 className="text-sm font-semibold text-[#f0f4ff]">
+                      <h4 className="text-sm font-semibold text-[var(--color-text-primary)]">
                         {alert.type.split("_").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")}
                       </h4>
                       <span className={`badge text-[10px] !py-0 ${
@@ -142,10 +142,10 @@ export default function FraudView() {
                         {alert.severity.toUpperCase()}
                       </span>
                     </div>
-                    <p className="text-xs text-[#94a3c8] mb-2">{alert.description}</p>
+                    <p className="text-xs text-[var(--color-text-secondary)] mb-2">{alert.description}</p>
                     <div className="flex items-center gap-4">
-                      <span className="text-xs text-[#5a6a8a]">Amount: <span className="font-semibold text-[#f0f4ff]">{formatCurrency(alert.amount)}</span></span>
-                      <span className="text-xs text-[#5a6a8a]">Date: {alert.date}</span>
+                      <span className="text-xs text-[var(--color-text-muted)]">Amount: <span className="font-semibold text-[var(--color-text-primary)]">{formatCurrency(alert.amount)}</span></span>
+                      <span className="text-xs text-[var(--color-text-muted)]">Date: {alert.date}</span>
                     </div>
                   </div>
                   <div className="flex flex-col items-end gap-2">
@@ -177,7 +177,7 @@ export default function FraudView() {
         <motion.div variants={itemVariants} className="glass-card p-5">
           <div className="flex items-center gap-2 mb-4">
             <Activity className="w-4 h-4 text-[#06d6a0]" />
-            <h3 className="text-sm font-semibold text-[#f0f4ff]">AI Monitoring Agents</h3>
+            <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">AI Monitoring Agents</h3>
             <div className="pulse-dot bg-[#06d6a0] text-[#06d6a0] ml-2" />
             <span className="text-[10px] text-[#06d6a0] font-semibold">Active</span>
           </div>
@@ -189,12 +189,12 @@ export default function FraudView() {
               { agent: "Pattern Detector", status: "Active", scanned: "2,891" },
             ].map((a) => (
               <div key={a.agent} className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
-                <p className="text-xs font-semibold text-[#f0f4ff] mb-1">{a.agent}</p>
+                <p className="text-xs font-semibold text-[var(--color-text-primary)] mb-1">{a.agent}</p>
                 <div className="flex items-center gap-1 mb-1">
                   <div className="w-1.5 h-1.5 rounded-full bg-[#10b981]" />
                   <span className="text-[10px] text-[#10b981]">{a.status}</span>
                 </div>
-                <p className="text-[10px] text-[#5a6a8a]">{a.scanned} items scanned</p>
+                <p className="text-[10px] text-[var(--color-text-muted)]">{a.scanned} items scanned</p>
               </div>
             ))}
           </div>
@@ -212,7 +212,7 @@ export default function FraudView() {
             >
               <button
                 onClick={() => setSelectedAlert(null)}
-                className="absolute top-4 right-4 p-2 text-[#94a3c8] hover:text-white rounded-full hover:bg-white/5 transition-colors"
+                className="absolute top-4 right-4 p-2 text-[var(--color-text-secondary)] hover:text-white rounded-full hover:bg-white/5 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -221,30 +221,30 @@ export default function FraudView() {
                   {React.createElement(severityConfig[selectedAlert.severity].icon, { className: `w-6 h-6 ${severityConfig[selectedAlert.severity].color}` })}
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-[#f0f4ff]">Alert Details</h3>
-                  <p className="text-sm text-[#94a3c8]">ID: {selectedAlert.id}</p>
+                  <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">Alert Details</h3>
+                  <p className="text-sm text-[var(--color-text-secondary)]">ID: {selectedAlert.id}</p>
                 </div>
               </div>
               
               <div className="space-y-4 mb-6">
                 <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.04]">
-                  <p className="text-sm text-[#f0f4ff] mb-4">{selectedAlert.description}</p>
+                  <p className="text-sm text-[var(--color-text-primary)] mb-4">{selectedAlert.description}</p>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <p className="text-xs text-[#5a6a8a] mb-1">Type</p>
-                      <p className="text-sm font-medium text-[#f0f4ff] capitalize">{selectedAlert.type.replace('_', ' ')}</p>
+                      <p className="text-xs text-[var(--color-text-muted)] mb-1">Type</p>
+                      <p className="text-sm font-medium text-[var(--color-text-primary)] capitalize">{selectedAlert.type.replace('_', ' ')}</p>
                     </div>
                     <div>
-                      <p className="text-xs text-[#5a6a8a] mb-1">Amount</p>
-                      <p className="text-sm font-medium text-[#f0f4ff]">{formatCurrency(selectedAlert.amount)}</p>
+                      <p className="text-xs text-[var(--color-text-muted)] mb-1">Amount</p>
+                      <p className="text-sm font-medium text-[var(--color-text-primary)]">{formatCurrency(selectedAlert.amount)}</p>
                     </div>
                     <div>
-                      <p className="text-xs text-[#5a6a8a] mb-1">Date</p>
-                      <p className="text-sm font-medium text-[#f0f4ff]">{selectedAlert.date}</p>
+                      <p className="text-xs text-[var(--color-text-muted)] mb-1">Date</p>
+                      <p className="text-sm font-medium text-[var(--color-text-primary)]">{selectedAlert.date}</p>
                     </div>
                     <div>
-                      <p className="text-xs text-[#5a6a8a] mb-1">Status</p>
-                      <p className="text-sm font-medium text-[#f0f4ff] capitalize">{selectedAlert.status}</p>
+                      <p className="text-xs text-[var(--color-text-muted)] mb-1">Status</p>
+                      <p className="text-sm font-medium text-[var(--color-text-primary)] capitalize">{selectedAlert.status}</p>
                     </div>
                   </div>
                 </div>
@@ -253,7 +253,7 @@ export default function FraudView() {
               <div className="flex justify-end gap-3">
                 <button
                   onClick={() => setSelectedAlert(null)}
-                  className="px-4 py-2 text-sm font-medium text-[#f0f4ff] bg-white/5 hover:bg-white/10 rounded-lg transition-colors"
+                  className="px-4 py-2 text-sm font-medium text-[var(--color-text-primary)] bg-white/5 hover:bg-white/10 rounded-lg transition-colors"
                 >
                   Close
                 </button>

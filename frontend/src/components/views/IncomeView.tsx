@@ -111,11 +111,11 @@ export default function IncomeView() {
       
       {/* Header Actions */}
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold text-[#f0f4ff]">Income Overview</h2>
+        <h2 className="text-xl font-bold text-[var(--color-text-primary)]">Income Overview</h2>
         <div className="flex gap-3">
           <button
             onClick={handleExport}
-            className="flex items-center gap-2 px-4 py-2 bg-white/[0.05] hover:bg-white/[0.1] text-white rounded-lg transition-colors text-sm font-medium border border-white/[0.05]"
+            className="flex items-center gap-2 px-4 py-2 bg-[var(--color-surface-800)] hover:bg-[var(--color-surface-700)] text-[var(--color-text-primary)] border border-[var(--color-glass-border)] rounded-lg transition-colors text-sm font-medium"
           >
             <Download className="w-4 h-4" />
             Export
@@ -132,36 +132,36 @@ export default function IncomeView() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <motion.div variants={itemVariants} className="glass-card metric-card green p-4">
-          <p className="text-xs text-[#5a6a8a] mb-1">Total Tracked Income</p>
+          <p className="text-xs text-[var(--color-text-muted)] mb-1">Total Tracked Income</p>
           <p className="text-2xl font-bold text-[#10b981]">{formatCurrency(totalIncome)}</p>
           <span className="text-xs text-[#10b981]">Dynamic from data</span>
         </motion.div>
         <motion.div variants={itemVariants} className="glass-card metric-card blue p-4">
-          <p className="text-xs text-[#5a6a8a] mb-1">Primary Salary</p>
-          <p className="text-2xl font-bold text-[#f0f4ff]">{formatCurrency(375000)}</p>
-          <span className="text-xs text-[#94a3c8]">TechNova Solutions</span>
+          <p className="text-xs text-[var(--color-text-muted)] mb-1">Primary Salary</p>
+          <p className="text-2xl font-bold text-[var(--color-text-primary)]">{formatCurrency(375000)}</p>
+          <span className="text-xs text-[var(--color-text-secondary)]">TechNova Solutions</span>
         </motion.div>
         <motion.div variants={itemVariants} className="glass-card metric-card violet p-4">
-          <p className="text-xs text-[#5a6a8a] mb-1">Business Revenue</p>
+          <p className="text-xs text-[var(--color-text-muted)] mb-1">Business Revenue</p>
           <p className="text-2xl font-bold text-[#7c3aed]">{formatCurrency(650000)}</p>
           <span className="text-xs text-[#10b981]">↑ 35.4% growth</span>
         </motion.div>
         <motion.div variants={itemVariants} className="glass-card metric-card amber p-4">
-          <p className="text-xs text-[#5a6a8a] mb-1">Passive Income</p>
+          <p className="text-xs text-[var(--color-text-muted)] mb-1">Passive Income</p>
           <p className="text-2xl font-bold text-[#f59e0b]">{formatCurrency(125000)}</p>
-          <span className="text-xs text-[#94a3c8]">Investments + Rental</span>
+          <span className="text-xs text-[var(--color-text-secondary)]">Investments + Rental</span>
         </motion.div>
       </div>
 
       {/* Income Trend */}
       <motion.div variants={itemVariants} className="glass-card p-5">
-        <h3 className="text-sm font-semibold text-[#f0f4ff] mb-1">Income Breakdown by Source</h3>
-        <p className="text-xs text-[#5a6a8a] mb-4">Monthly stacked view</p>
+        <h3 className="text-sm font-semibold text-[var(--color-text-primary)] mb-1">Income Breakdown by Source</h3>
+        <p className="text-xs text-[var(--color-text-muted)] mb-4">Monthly stacked view</p>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={monthlyIncome}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-            <XAxis dataKey="month" tick={{ fill: "#5a6a8a", fontSize: 11 }} axisLine={false} tickLine={false} />
-            <YAxis tick={{ fill: "#5a6a8a", fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={(v) => formatCurrencyShort(v)} />
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--color-glass-border)" />
+            <XAxis dataKey="month" tick={{ fill: "var(--color-text-muted)", fontSize: 11 }} axisLine={false} tickLine={false} />
+            <YAxis tick={{ fill: "var(--color-text-muted)", fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={(v) => formatCurrencyShort(v)} />
             <Tooltip contentStyle={{ background: "#151d35", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, fontSize: 12, color: "#f0f4ff" }} formatter={(value) => formatCurrency(Number(value ?? 0))} />
             <Bar dataKey="salary" stackId="income" fill="#4361ee" radius={[0, 0, 0, 0]} name="Salary" />
             <Bar dataKey="business" stackId="income" fill="#06d6a0" radius={[0, 0, 0, 0]} name="Business" />
@@ -175,7 +175,7 @@ export default function IncomeView() {
       <motion.div variants={itemVariants} className="glass-card p-5">
         <div className="flex items-center gap-2 mb-4">
           <Sparkles className="w-4 h-4 text-[#f59e0b]" />
-          <h3 className="text-sm font-semibold text-[#f0f4ff]">Detected Income Sources</h3>
+          <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">Detected Income Sources</h3>
         </div>
         <div className="space-y-3">
           {incomes.length > 0 ? incomes.map((src: any, index) => (
@@ -184,18 +184,18 @@ export default function IncomeView() {
                 <TrendingUp className="w-4 h-4 text-[#4361ee]" />
               </div>
               <div className="flex-1">
-                <p className="text-sm font-medium text-[#f0f4ff]">{src.source || "Unknown Source"}</p>
-                <p className="text-xs text-[#5a6a8a]">{src.description || (src.is_recurring ? "Recurring" : "One-time")}</p>
+                <p className="text-sm font-medium text-[var(--color-text-primary)]">{src.source || "Unknown Source"}</p>
+                <p className="text-xs text-[var(--color-text-muted)]">{src.description || (src.is_recurring ? "Recurring" : "One-time")}</p>
               </div>
               <div className="text-right">
-                <p className="text-sm font-bold text-[#f0f4ff]">{formatCurrency(Number(src.amount || 0))}</p>
-                <span className="text-xs text-[#94a3c8]">
+                <p className="text-sm font-bold text-[var(--color-text-primary)]">{formatCurrency(Number(src.amount || 0))}</p>
+                <span className="text-xs text-[var(--color-text-secondary)]">
                   {src.date ? new Date(src.date).toLocaleDateString() : ""}
                 </span>
               </div>
             </div>
           )) : (
-            <p className="text-sm text-[#5a6a8a]">No income data found. Add some to get started.</p>
+            <p className="text-sm text-[var(--color-text-muted)]">No income data found. Add some to get started.</p>
           )}
         </div>
       </motion.div>
@@ -208,42 +208,41 @@ export default function IncomeView() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="glass-card w-full max-w-md p-6 relative border border-white/[0.08]"
-              style={{ background: "linear-gradient(145deg, rgba(30, 36, 56, 0.95), rgba(20, 24, 40, 0.95))" }}
+              className="glass-card w-full max-w-md p-6 relative"
             >
               <button
                 onClick={() => setIsAddModalOpen(false)}
                 className="absolute top-4 right-4 p-1 rounded-lg hover:bg-white/[0.05] transition-colors"
               >
-                <X className="w-5 h-5 text-[#5a6a8a]" />
+                <X className="w-5 h-5 text-[var(--color-text-muted)]" />
               </button>
               
-              <h3 className="text-lg font-bold text-[#f0f4ff] mb-6">Add Income</h3>
+              <h3 className="text-lg font-bold text-[var(--color-text-primary)] mb-6">Add Income</h3>
               
               <form onSubmit={handleAddSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-xs font-medium text-[#94a3c8] mb-1">Source</label>
+                  <label className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1">Source</label>
                   <input
                     type="text"
                     required
                     value={formData.source}
                     onChange={(e) => setFormData({ ...formData, source: e.target.value })}
-                    className="w-full bg-[#0f1428] border border-white/[0.05] rounded-xl px-4 py-2.5 text-sm text-[#f0f4ff] focus:outline-none focus:border-[#4361ee] transition-colors"
+                    className="w-full bg-[var(--color-surface-900)] border border-[var(--color-glass-border)] rounded-xl px-4 py-2.5 text-sm text-[var(--color-text-primary)] focus:outline-none focus:border-[#4361ee] transition-colors"
                     placeholder="e.g. Salary"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-[#94a3c8] mb-1">Description</label>
+                  <label className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1">Description</label>
                   <input
                     type="text"
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    className="w-full bg-[#0f1428] border border-white/[0.05] rounded-xl px-4 py-2.5 text-sm text-[#f0f4ff] focus:outline-none focus:border-[#4361ee] transition-colors"
+                    className="w-full bg-[var(--color-surface-900)] border border-[var(--color-glass-border)] rounded-xl px-4 py-2.5 text-sm text-[var(--color-text-primary)] focus:outline-none focus:border-[#4361ee] transition-colors"
                     placeholder="e.g. Monthly salary from TechNova"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-[#94a3c8] mb-1">Amount</label>
+                  <label className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1">Amount</label>
                   <input
                     type="number"
                     required
@@ -251,18 +250,18 @@ export default function IncomeView() {
                     step="0.01"
                     value={formData.amount}
                     onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-                    className="w-full bg-[#0f1428] border border-white/[0.05] rounded-xl px-4 py-2.5 text-sm text-[#f0f4ff] focus:outline-none focus:border-[#4361ee] transition-colors"
+                    className="w-full bg-[var(--color-surface-900)] border border-[var(--color-glass-border)] rounded-xl px-4 py-2.5 text-sm text-[var(--color-text-primary)] focus:outline-none focus:border-[#4361ee] transition-colors"
                     placeholder="0.00"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-[#94a3c8] mb-1">Date</label>
+                  <label className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1">Date</label>
                   <input
                     type="date"
                     required
                     value={formData.date}
                     onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                    className="w-full bg-[#0f1428] border border-white/[0.05] rounded-xl px-4 py-2.5 text-sm text-[#f0f4ff] focus:outline-none focus:border-[#4361ee] transition-colors"
+                    className="w-full bg-[var(--color-surface-900)] border border-[var(--color-glass-border)] rounded-xl px-4 py-2.5 text-sm text-[var(--color-text-primary)] focus:outline-none focus:border-[#4361ee] transition-colors"
                   />
                 </div>
                 <div className="flex items-center gap-2 mt-2">
@@ -271,16 +270,16 @@ export default function IncomeView() {
                     id="is_recurring"
                     checked={formData.is_recurring}
                     onChange={(e) => setFormData({ ...formData, is_recurring: e.target.checked })}
-                    className="rounded bg-[#0f1428] border-white/[0.05] text-[#4361ee] focus:ring-[#4361ee] w-4 h-4"
+                    className="rounded bg-[var(--color-surface-900)] border-[var(--color-glass-border)] text-[#4361ee] focus:ring-[#4361ee] w-4 h-4"
                   />
-                  <label htmlFor="is_recurring" className="text-sm text-[#94a3c8]">Recurring Income</label>
+                  <label htmlFor="is_recurring" className="text-sm text-[var(--color-text-secondary)]">Recurring Income</label>
                 </div>
                 
                 <div className="pt-4 flex gap-3">
                   <button
                     type="button"
                     onClick={() => setIsAddModalOpen(false)}
-                    className="flex-1 px-4 py-2.5 bg-white/[0.05] hover:bg-white/[0.08] text-white rounded-xl transition-colors text-sm font-medium"
+                    className="flex-1 px-4 py-2.5 bg-[var(--color-surface-800)] hover:bg-[var(--color-surface-700)] text-[var(--color-text-primary)] rounded-xl transition-colors text-sm font-medium"
                   >
                     Cancel
                   </button>

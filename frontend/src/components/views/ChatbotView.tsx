@@ -279,7 +279,7 @@ export default function ChatbotView() {
             <Bot className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-[#f0f4ff]">FinPilot AI Assistant</h3>
+            <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">FinPilot AI Assistant</h3>
             <div className="flex items-center gap-1.5">
               <div className="pulse-dot bg-[#06d6a0] text-[#06d6a0] !w-2 !h-2" />
               <span className="text-[10px] text-[#06d6a0]">Online • RAG + LangChain</span>
@@ -291,7 +291,7 @@ export default function ChatbotView() {
               className="p-2 rounded-lg hover:bg-white/[0.05] transition-colors"
               title="Reset chat"
             >
-              <RotateCcw className="w-4 h-4 text-[#5a6a8a]" />
+              <RotateCcw className="w-4 h-4 text-[var(--color-text-muted)]" />
             </button>
           </div>
         </div>
@@ -323,11 +323,11 @@ export default function ChatbotView() {
                       className="text-sm leading-relaxed prose prose-invert prose-sm max-w-none
                         [&_h1]:text-base [&_h1]:font-bold [&_h1]:mb-2 [&_h1]:mt-0
                         [&_h2]:text-sm [&_h2]:font-semibold [&_h2]:mb-1.5
-                        [&_strong]:text-[#f0f4ff] [&_strong]:font-semibold
+                        [&_strong]:text-[var(--color-text-primary)] [&_strong]:font-semibold
                         [&_table]:w-full [&_table]:text-xs [&_table]:my-2
-                        [&_th]:text-left [&_th]:px-2 [&_th]:py-1.5 [&_th]:border-b [&_th]:border-white/10 [&_th]:text-[#94a3c8] [&_th]:font-semibold
+                        [&_th]:text-left [&_th]:px-2 [&_th]:py-1.5 [&_th]:border-b [&_th]:border-white/10 [&_th]:text-[var(--color-text-secondary)] [&_th]:font-semibold
                         [&_td]:px-2 [&_td]:py-1.5 [&_td]:border-b [&_td]:border-white/5
-                        [&_li]:text-[#94a3c8] [&_li]:text-xs
+                        [&_li]:text-[var(--color-text-secondary)] [&_li]:text-xs
                         [&_code]:text-[#06d6a0] [&_code]:bg-white/5 [&_code]:px-1 [&_code]:rounded
                         [&_p]:mb-2 [&_p:last-child]:mb-0"
                       dangerouslySetInnerHTML={{
@@ -373,7 +373,7 @@ export default function ChatbotView() {
         <div className="p-4 border-t border-white/[0.06]">
           <div className="flex items-center gap-2">
             <button className="p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.06] transition-colors">
-              <Paperclip className="w-4 h-4 text-[#5a6a8a]" />
+              <Paperclip className="w-4 h-4 text-[var(--color-text-muted)]" />
             </button>
             <div className="flex-1 relative">
               <input
@@ -386,7 +386,7 @@ export default function ChatbotView() {
                 className="input-field !pr-12"
               />
               <button className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-lg hover:bg-white/[0.05] transition-colors">
-                <Mic className="w-4 h-4 text-[#5a6a8a]" />
+                <Mic className="w-4 h-4 text-[var(--color-text-muted)]" />
               </button>
             </div>
             <motion.button
@@ -405,7 +405,7 @@ export default function ChatbotView() {
       {/* Sidebar — Suggestions */}
       <motion.div variants={itemVariants} className="w-72 hidden xl:flex flex-col gap-4">
         <div className="glass-card p-4">
-          <h4 className="text-xs font-semibold text-[#f0f4ff] mb-3 flex items-center gap-2">
+          <h4 className="text-xs font-semibold text-[var(--color-text-primary)] mb-3 flex items-center gap-2">
             <Lightbulb className="w-3.5 h-3.5 text-[#f59e0b]" />
             Suggested Questions
           </h4>
@@ -421,9 +421,9 @@ export default function ChatbotView() {
                 >
                   <div className="flex items-center gap-2 mb-1">
                     <Icon className="w-3.5 h-3.5 text-[#4361ee]" />
-                    <span className="text-[10px] text-[#5a6a8a]">{q.category}</span>
+                    <span className="text-[10px] text-[var(--color-text-muted)]">{q.category}</span>
                   </div>
-                  <p className="text-xs text-[#94a3c8]">{q.text}</p>
+                  <p className="text-xs text-[var(--color-text-secondary)]">{q.text}</p>
                 </motion.button>
               );
             })}
@@ -432,7 +432,7 @@ export default function ChatbotView() {
 
         {/* AI Agents Status */}
         <div className="glass-card p-4">
-          <h4 className="text-xs font-semibold text-[#f0f4ff] mb-3">Active AI Agents</h4>
+          <h4 className="text-xs font-semibold text-[var(--color-text-primary)] mb-3">Active AI Agents</h4>
           <div className="space-y-2">
             {[
               { name: "Income Agent", status: "active" },
@@ -443,10 +443,10 @@ export default function ChatbotView() {
               { name: "Strategy Agent", status: "active" },
             ].map((agent) => (
               <div key={agent.name} className="flex items-center justify-between py-1">
-                <span className="text-xs text-[#94a3c8]">{agent.name}</span>
+                <span className="text-xs text-[var(--color-text-secondary)]">{agent.name}</span>
                 <div className="flex items-center gap-1.5">
                   <div className={`w-1.5 h-1.5 rounded-full ${agent.status === "active" ? "bg-[#10b981]" : "bg-[#5a6a8a]"}`} />
-                  <span className={`text-[10px] ${agent.status === "active" ? "text-[#10b981]" : "text-[#5a6a8a]"}`}>
+                  <span className={`text-[10px] ${agent.status === "active" ? "text-[#10b981]" : "text-[var(--color-text-muted)]"}`}>
                     {agent.status}
                   </span>
                 </div>

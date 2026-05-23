@@ -21,6 +21,8 @@ import {
   PieChart,
   CreditCard,
   Building2,
+  Sun,
+  Moon,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -68,31 +70,66 @@ const navSections = [
 
 export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
+  const [isDark, setIsDark] = useState(true);
+
+  React.useEffect(() => {
+    const isDarkMode = document.documentElement.classList.contains("dark");
+    setIsDark(isDarkMode);
+  }, []);
+
+  const toggleTheme = () => {
+    const newDark = !isDark;
+    setIsDark(newDark);
+    if (newDark) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  };
 
   return (
     <motion.aside
       initial={false}
       animate={{ width: collapsed ? 72 : 260 }}
       transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-      className="h-screen sticky top-0 flex flex-col border-r border-white/[0.06] bg-[#0c1220]/80 backdrop-blur-xl z-40"
+      className="h-screen sticky top-0 flex flex-col border-r border-[var(--color-glass-border)] bg-[var(--color-surface-900)]/80 backdrop-blur-xl z-40 transition-colors duration-500 ease-in-out"
     >
       {/* Logo */}
-      <div className="flex items-center gap-3 px-5 h-16 border-b border-white/[0.06]">
-        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#4361ee] to-[#06d6a0] flex items-center justify-center flex-shrink-0">
-          <Sparkles className="w-4 h-4 text-white" />
+      <div className="flex items-center justify-between px-5 h-16 border-b border-[var(--color-glass-border)] transition-colors duration-500 ease-in-out">
+        <div className="flex items-center gap-3 overflow-hidden">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#4361ee] to-[#06d6a0] flex items-center justify-center flex-shrink-0">
+            <Sparkles className="w-4 h-4 text-white" />
+          </div>
+          <AnimatePresence>
+            {!collapsed && (
+              <motion.div
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                className="overflow-hidden"
+              >
+                <h1 className="text-base font-bold gradient-text whitespace-nowrap">
+                  FinPilot AI
+                </h1>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
+        
         <AnimatePresence>
           {!collapsed && (
-            <motion.div
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -10 }}
-              className="overflow-hidden"
+            <motion.button
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={toggleTheme}
+              className="p-1.5 rounded-lg hover:bg-[var(--color-glass-white)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
+              title="Toggle Theme"
             >
-              <h1 className="text-base font-bold gradient-text whitespace-nowrap">
-                FinPilot AI
-              </h1>
-            </motion.div>
+              {isDark ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
+            </motion.button>
           )}
         </AnimatePresence>
       </div>
@@ -107,7 +144,7 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="px-3 mb-2 text-[10px] font-semibold uppercase tracking-[0.1em] text-[#5a6a8a]"
+                  className="px-3 mb-2 text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--color-text-muted)]"
                 >
                   {section.title}
                 </motion.p>
@@ -153,7 +190,7 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
       </nav>
 
       {/* Bottom */}
-      <div className="p-3 border-t border-white/[0.06] space-y-2">
+      <div className="p-3 border-t border-[var(--color-glass-border)] space-y-2 transition-colors duration-500 ease-in-out">
         {/* AI Status */}
         {!collapsed && (
           <div className="glass-card p-3 mb-2 !bg-gradient-to-r from-[#4361ee]/10 to-[#06d6a0]/10 !border-[#4361ee]/20">
@@ -161,7 +198,7 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
               <div className="pulse-dot bg-[#06d6a0] text-[#06d6a0]" />
               <span className="text-xs font-semibold text-[#06d6a0]">AI Engine Active</span>
             </div>
-            <p className="text-[10px] text-[#94a3c8]">
+            <p className="text-[10px] text-[var(--color-text-secondary)]">
               6 agents monitoring your finances
             </p>
           </div>

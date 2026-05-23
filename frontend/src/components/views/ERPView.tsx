@@ -44,8 +44,8 @@ export default function ERPView() {
   return (
     <motion.div variants={containerVariants} initial="hidden" animate="show" className="p-6 space-y-6">
       <motion.div variants={itemVariants}>
-        <h3 className="text-xl font-bold text-[#f0f4ff]">ERP Integrations</h3>
-        <p className="text-sm text-[#5a6a8a] mt-1">Connect your enterprise systems for automated data sync</p>
+        <h3 className="text-xl font-bold text-[var(--color-text-primary)]">ERP Integrations</h3>
+        <p className="text-sm text-[var(--color-text-muted)] mt-1">Connect your enterprise systems for automated data sync</p>
       </motion.div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -61,16 +61,16 @@ export default function ERPView() {
                 <span className="badge badge-info text-[10px]">Available</span>
               )}
             </div>
-            <h4 className="text-sm font-semibold text-[#f0f4ff] mb-0.5">{erp.name}</h4>
-            <p className="text-xs text-[#5a6a8a] mb-3">{erp.category}</p>
+            <h4 className="text-sm font-semibold text-[var(--color-text-primary)] mb-0.5">{erp.name}</h4>
+            <p className="text-xs text-[var(--color-text-muted)] mb-3">{erp.category}</p>
             <div className="flex flex-wrap gap-1.5 mb-4">
               {erp.modules.map((m) => (
-                <span key={m} className="text-[10px] px-2 py-0.5 rounded-lg bg-white/[0.03] border border-white/[0.06] text-[#94a3c8]">{m}</span>
+                <span key={m} className="text-[10px] px-2 py-0.5 rounded-lg bg-white/[0.03] border border-white/[0.06] text-[var(--color-text-secondary)]">{m}</span>
               ))}
             </div>
             {erp.status === "connected" ? (
               <div className="flex items-center justify-between pt-3 border-t border-white/[0.04]">
-                <span className="text-[10px] text-[#5a6a8a]">Synced: {erp.lastSync}</span>
+                <span className="text-[10px] text-[var(--color-text-muted)]">Synced: {erp.lastSync}</span>
                 <button 
                   onClick={() => handleSync(erp.name)}
                   disabled={syncingId === erp.name}

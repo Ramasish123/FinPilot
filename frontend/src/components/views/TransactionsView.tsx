@@ -81,21 +81,21 @@ export default function TransactionsView() {
       {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <motion.div variants={itemVariants} className="glass-card metric-card green p-4">
-          <p className="text-xs text-[#5a6a8a] mb-1">Total Income</p>
+          <p className="text-xs text-[var(--color-text-muted)] mb-1">Total Income</p>
           <p className="text-2xl font-bold text-[#10b981]">+{formatCurrency(totalCredits)}</p>
-          <p className="text-xs text-[#94a3c8] mt-1">{filtered.filter((t) => t.type === "credit").length} transactions</p>
+          <p className="text-xs text-[var(--color-text-secondary)] mt-1">{filtered.filter((t) => t.type === "credit").length} transactions</p>
         </motion.div>
         <motion.div variants={itemVariants} className="glass-card metric-card rose p-4">
-          <p className="text-xs text-[#5a6a8a] mb-1">Total Expenses</p>
+          <p className="text-xs text-[var(--color-text-muted)] mb-1">Total Expenses</p>
           <p className="text-2xl font-bold text-[#f43f5e]">-{formatCurrency(totalDebits)}</p>
-          <p className="text-xs text-[#94a3c8] mt-1">{filtered.filter((t) => t.type === "debit").length} transactions</p>
+          <p className="text-xs text-[var(--color-text-secondary)] mt-1">{filtered.filter((t) => t.type === "debit").length} transactions</p>
         </motion.div>
         <motion.div variants={itemVariants} className="glass-card metric-card blue p-4">
-          <p className="text-xs text-[#5a6a8a] mb-1">Net Flow</p>
+          <p className="text-xs text-[var(--color-text-muted)] mb-1">Net Flow</p>
           <p className={`text-2xl font-bold ${totalCredits - totalDebits >= 0 ? "text-[#10b981]" : "text-[#f43f5e]"}`}>
             {totalCredits - totalDebits >= 0 ? "+" : "-"}{formatCurrency(Math.abs(totalCredits - totalDebits))}
           </p>
-          <p className="text-xs text-[#94a3c8] mt-1">{filtered.length} total transactions</p>
+          <p className="text-xs text-[var(--color-text-secondary)] mt-1">{filtered.length} total transactions</p>
         </motion.div>
       </div>
 
@@ -103,7 +103,7 @@ export default function TransactionsView() {
       <motion.div variants={itemVariants} className="glass-card p-4">
         <div className="flex flex-wrap items-center gap-3">
           <div className="relative flex-1 min-w-[200px]">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#5a6a8a]" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-text-muted)]" />
             <input
               type="text"
               placeholder="Search by merchant..."
@@ -113,7 +113,7 @@ export default function TransactionsView() {
             />
           </div>
           <div className="flex items-center gap-2">
-            <Filter className="w-4 h-4 text-[#5a6a8a]" />
+            <Filter className="w-4 h-4 text-[var(--color-text-muted)]" />
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
@@ -163,7 +163,7 @@ export default function TransactionsView() {
                 transition={{ delay: i * 0.03 }}
               >
                 <td>
-                  <span className="text-[#f0f4ff] font-medium text-sm">
+                  <span className="text-[var(--color-text-primary)] font-medium text-sm">
                     {new Date(txn.date).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}
                   </span>
                 </td>
@@ -173,8 +173,8 @@ export default function TransactionsView() {
                       {txn.type === "credit" ? <ArrowDownRight className="w-3.5 h-3.5" /> : <ArrowUpRight className="w-3.5 h-3.5" />}
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-[#f0f4ff]">{txn.merchant}</p>
-                      <p className="text-[10px] text-[#5a6a8a]">{txn.category}</p>
+                      <p className="text-sm font-medium text-[var(--color-text-primary)]">{txn.merchant}</p>
+                      <p className="text-[10px] text-[var(--color-text-muted)]">{txn.category}</p>
                     </div>
                     {txn.flagged && <AlertTriangle className="w-3.5 h-3.5 text-[#f59e0b]" />}
                   </div>
@@ -189,13 +189,13 @@ export default function TransactionsView() {
                   </span>
                 </td>
                 <td className="text-right">
-                  <span className={`text-sm font-semibold ${txn.type === "credit" ? "text-[#10b981]" : "text-[#f0f4ff]"}`}>
+                  <span className={`text-sm font-semibold ${txn.type === "credit" ? "text-[#10b981]" : "text-[var(--color-text-primary)]"}`}>
                     {txn.type === "credit" ? "+" : "-"}{formatCurrency(txn.amount)}
                   </span>
                 </td>
                 <td className="text-center">
                   <button onClick={() => setSelectedTxn(txn)} className="p-1.5 rounded-lg hover:bg-white/[0.05] transition-colors">
-                    <MoreHorizontal className="w-4 h-4 text-[#5a6a8a]" />
+                    <MoreHorizontal className="w-4 h-4 text-[var(--color-text-muted)]" />
                   </button>
                 </td>
               </motion.tr>
@@ -209,39 +209,39 @@ export default function TransactionsView() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="glass-card max-w-md w-full p-6 relative">
             <button onClick={() => setSelectedTxn(null)} className="absolute top-4 right-4 p-1.5 hover:bg-white/[0.05] rounded-lg transition-colors">
-              <X className="w-4 h-4 text-[#5a6a8a]" />
+              <X className="w-4 h-4 text-[var(--color-text-muted)]" />
             </button>
-            <h3 className="text-xl font-semibold text-[#f0f4ff] mb-4">Transaction Details</h3>
+            <h3 className="text-xl font-semibold text-[var(--color-text-primary)] mb-4">Transaction Details</h3>
             
             <div className="space-y-4">
               <div>
-                <p className="text-sm text-[#5a6a8a]">Merchant</p>
-                <p className="text-base text-[#f0f4ff]">{selectedTxn.merchant}</p>
+                <p className="text-sm text-[var(--color-text-muted)]">Merchant</p>
+                <p className="text-base text-[var(--color-text-primary)]">{selectedTxn.merchant}</p>
               </div>
               <div>
-                <p className="text-sm text-[#5a6a8a]">Amount</p>
+                <p className="text-sm text-[var(--color-text-muted)]">Amount</p>
                 <p className={`text-base font-semibold ${selectedTxn.type === "credit" ? "text-[#10b981]" : "text-[#f43f5e]"}`}>
                   {selectedTxn.type === "credit" ? "+" : "-"}{formatCurrency(selectedTxn.amount)}
                 </p>
               </div>
               <div>
-                <p className="text-sm text-[#5a6a8a]">Date</p>
-                <p className="text-base text-[#f0f4ff]">{new Date(selectedTxn.date).toLocaleString()}</p>
+                <p className="text-sm text-[var(--color-text-muted)]">Date</p>
+                <p className="text-base text-[var(--color-text-primary)]">{new Date(selectedTxn.date).toLocaleString()}</p>
               </div>
               <div>
-                <p className="text-sm text-[#5a6a8a]">Category</p>
-                <p className="text-base text-[#f0f4ff]">{selectedTxn.category}</p>
+                <p className="text-sm text-[var(--color-text-muted)]">Category</p>
+                <p className="text-base text-[var(--color-text-primary)]">{selectedTxn.category}</p>
               </div>
               <div>
-                <p className="text-sm text-[#5a6a8a]">AI Category</p>
-                <p className="text-base text-[#f0f4ff]">{selectedTxn.aiCategory}</p>
+                <p className="text-sm text-[var(--color-text-muted)]">AI Category</p>
+                <p className="text-base text-[var(--color-text-primary)]">{selectedTxn.aiCategory}</p>
               </div>
               <div>
-                <p className="text-sm text-[#5a6a8a]">Account</p>
-                <p className="text-base text-[#f0f4ff]">{selectedTxn.account}</p>
+                <p className="text-sm text-[var(--color-text-muted)]">Account</p>
+                <p className="text-base text-[var(--color-text-primary)]">{selectedTxn.account}</p>
               </div>
               <div>
-                <p className="text-sm text-[#5a6a8a]">Status</p>
+                <p className="text-sm text-[var(--color-text-muted)]">Status</p>
                 <span className={`mt-1 inline-block badge ${selectedTxn.status === "completed" ? "badge-success" : selectedTxn.status === "pending" ? "badge-warning" : "badge-danger"}`}>
                   {selectedTxn.status}
                 </span>

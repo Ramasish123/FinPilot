@@ -130,7 +130,7 @@ export default function ExpensesView() {
     <motion.div variants={containerVariants} initial="hidden" animate="show" className="p-6 space-y-6">
       {/* Header Actions */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h2 className="text-xl font-bold text-[#f0f4ff]">Expenses Overview</h2>
+        <h2 className="text-xl font-bold text-[var(--color-text-primary)]">Expenses Overview</h2>
         <div className="flex items-center gap-3">
           <button onClick={handleExport} className="btn-secondary py-2 px-4 flex items-center gap-2">
             <Download className="w-4 h-4" /> Export
@@ -143,17 +143,17 @@ export default function ExpensesView() {
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <motion.div variants={itemVariants} className="glass-card metric-card rose p-4">
-          <p className="text-xs text-[#5a6a8a] mb-1">Total Expenses</p>
+          <p className="text-xs text-[var(--color-text-muted)] mb-1">Total Expenses</p>
           <p className="text-2xl font-bold text-[#f43f5e]">{formatCurrency(totalExpenses)}</p>
           <span className="text-xs text-[#f43f5e]">↑ 7.1% from last month</span>
         </motion.div>
         <motion.div variants={itemVariants} className="glass-card metric-card green p-4">
-          <p className="text-xs text-[#5a6a8a] mb-1">Savings Rate</p>
+          <p className="text-xs text-[var(--color-text-muted)] mb-1">Savings Rate</p>
           <p className="text-2xl font-bold text-[#10b981]">25.3%</p>
-          <span className="text-xs text-[#94a3c8]">Target: 30%</span>
+          <span className="text-xs text-[var(--color-text-secondary)]">Target: 30%</span>
         </motion.div>
         <motion.div variants={itemVariants} className="glass-card metric-card amber p-4">
-          <p className="text-xs text-[#5a6a8a] mb-1">Wasteful Spending</p>
+          <p className="text-xs text-[var(--color-text-muted)] mb-1">Wasteful Spending</p>
           <p className="text-2xl font-bold text-[#f59e0b]">{formatCurrency(21200)}</p>
           <span className="text-xs text-[#f59e0b]">AI detected 3 items</span>
         </motion.div>
@@ -162,7 +162,7 @@ export default function ExpensesView() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Pie Chart */}
         <motion.div variants={itemVariants} className="glass-card p-5">
-          <h3 className="text-sm font-semibold text-[#f0f4ff] mb-4">Category Breakdown</h3>
+          <h3 className="text-sm font-semibold text-[var(--color-text-primary)] mb-4">Category Breakdown</h3>
           <div className="flex items-center gap-6">
             <ResponsiveContainer width={200} height={200}>
               <PieChart>
@@ -178,13 +178,13 @@ export default function ExpensesView() {
                 <div key={item.category} className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="w-3 h-3 rounded flex-shrink-0" style={{ background: item.color }} />
-                    <span className="text-xs text-[#94a3c8] truncate max-w-[120px]">{item.category}</span>
+                    <span className="text-xs text-[var(--color-text-secondary)] truncate max-w-[120px]">{item.category}</span>
                   </div>
-                  <span className="text-xs font-semibold text-[#f0f4ff]">{item.percentage}%</span>
+                  <span className="text-xs font-semibold text-[var(--color-text-primary)]">{item.percentage}%</span>
                 </div>
               ))}
               {expenseBreakdown.length === 0 && (
-                <p className="text-xs text-[#5a6a8a]">No data available.</p>
+                <p className="text-xs text-[var(--color-text-muted)]">No data available.</p>
               )}
             </div>
           </div>
@@ -192,12 +192,12 @@ export default function ExpensesView() {
 
         {/* Monthly Trend */}
         <motion.div variants={itemVariants} className="glass-card p-5">
-          <h3 className="text-sm font-semibold text-[#f0f4ff] mb-4">Monthly Trend</h3>
+          <h3 className="text-sm font-semibold text-[var(--color-text-primary)] mb-4">Monthly Trend</h3>
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={monthlyExpenses}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-              <XAxis dataKey="month" tick={{ fill: "#5a6a8a", fontSize: 11 }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fill: "#5a6a8a", fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={(v) => formatCurrencyShort(v)} />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-glass-border)" />
+              <XAxis dataKey="month" tick={{ fill: "var(--color-text-muted)", fontSize: 11 }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fill: "var(--color-text-muted)", fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={(v) => formatCurrencyShort(v)} />
               <Tooltip contentStyle={{ background: "#151d35", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, fontSize: 12, color: "#f0f4ff" }} formatter={(value) => formatCurrency(Number(value ?? 0))} />
               <Bar dataKey="amount" fill="#f43f5e" radius={[6, 6, 0, 0]} name="Expenses" />
             </BarChart>
@@ -207,10 +207,10 @@ export default function ExpensesView() {
 
       {/* Expense List */}
       <motion.div variants={itemVariants} className="glass-card p-5">
-        <h3 className="text-sm font-semibold text-[#f0f4ff] mb-4">Recent Expenses</h3>
+        <h3 className="text-sm font-semibold text-[var(--color-text-primary)] mb-4">Recent Expenses</h3>
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-[#94a3c8]">
-            <thead className="text-xs uppercase text-[#5a6a8a] bg-white/[0.02]">
+          <table className="w-full text-left text-sm text-[var(--color-text-secondary)]">
+            <thead className="text-xs uppercase text-[var(--color-text-muted)] bg-white/[0.02]">
               <tr>
                 <th className="px-4 py-3 rounded-l-lg">Date</th>
                 <th className="px-4 py-3">Category</th>
@@ -228,8 +228,8 @@ export default function ExpensesView() {
                       {expense.category}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-[#f0f4ff]">{expense.description}</td>
-                  <td className="px-4 py-3 text-right font-medium text-[#f0f4ff] whitespace-nowrap">
+                  <td className="px-4 py-3 text-[var(--color-text-primary)]">{expense.description}</td>
+                  <td className="px-4 py-3 text-right font-medium text-[var(--color-text-primary)] whitespace-nowrap">
                     {formatCurrency(expense.amount)}
                   </td>
                   <td className="px-4 py-3 text-right">
@@ -247,7 +247,7 @@ export default function ExpensesView() {
               ))}
               {expenses.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-4 py-8 text-center text-[#5a6a8a]">
+                  <td colSpan={5} className="px-4 py-8 text-center text-[var(--color-text-muted)]">
                     No expenses found. Add one to get started.
                   </td>
                 </tr>
@@ -261,16 +261,16 @@ export default function ExpensesView() {
       <motion.div variants={itemVariants} className="glass-card p-5">
         <div className="flex items-center gap-2 mb-4">
           <Sparkles className="w-4 h-4 text-[#f59e0b]" />
-          <h3 className="text-sm font-semibold text-[#f0f4ff]">AI Spending Alerts</h3>
+          <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">AI Spending Alerts</h3>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {spendingAlerts.map((alert) => (
             <div key={alert.category} className="p-4 rounded-xl bg-white/[0.02] border border-[#f59e0b]/15">
               <div className="flex items-center gap-2 mb-2">
                 <AlertTriangle className="w-4 h-4 text-[#f59e0b]" />
-                <span className="text-xs font-semibold text-[#f0f4ff]">{alert.category}</span>
+                <span className="text-xs font-semibold text-[var(--color-text-primary)]">{alert.category}</span>
               </div>
-              <p className="text-lg font-bold text-[#f0f4ff] mb-1">{formatCurrency(alert.amount)}</p>
+              <p className="text-lg font-bold text-[var(--color-text-primary)] mb-1">{formatCurrency(alert.amount)}</p>
               <p className="text-xs text-[#f59e0b]">{alert.alert}</p>
               <span className="inline-block px-2 py-1 bg-[#f59e0b]/10 text-[#f59e0b] rounded text-[10px] font-medium mt-2 capitalize">
                 {alert.type} spending
@@ -292,53 +292,53 @@ export default function ExpensesView() {
             >
               <button
                 onClick={() => setShowAddModal(false)}
-                className="absolute top-4 right-4 p-1 rounded-lg text-[#94a3c8] hover:text-white hover:bg-white/10 transition-colors"
+                className="absolute top-4 right-4 p-1 rounded-lg text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-white/10 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
-              <h3 className="text-lg font-semibold text-[#f0f4ff] mb-6">Add New Expense</h3>
+              <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-6">Add New Expense</h3>
               <form onSubmit={handleAddExpense} className="space-y-4">
                 <div>
-                  <label className="block text-xs font-medium text-[#94a3c8] mb-1.5">Category</label>
+                  <label className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1.5">Category</label>
                   <input
                     type="text"
                     required
                     placeholder="e.g. Food & Dining"
-                    className="w-full bg-[#0a0f1c]/50 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#4361ee] focus:bg-[#0a0f1c] transition-colors"
+                    className="w-full bg-[var(--color-surface-900)]/50 border border-[var(--color-glass-border)] rounded-xl px-4 py-2.5 text-sm text-[var(--color-text-primary)] focus:outline-none focus:border-[#4361ee] focus:bg-[var(--color-surface-900)] transition-colors"
                     value={formData.category}
                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-[#94a3c8] mb-1.5">Description</label>
+                  <label className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1.5">Description</label>
                   <input
                     type="text"
                     required
                     placeholder="Brief description"
-                    className="w-full bg-[#0a0f1c]/50 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#4361ee] focus:bg-[#0a0f1c] transition-colors"
+                    className="w-full bg-[var(--color-surface-900)]/50 border border-[var(--color-glass-border)] rounded-xl px-4 py-2.5 text-sm text-[var(--color-text-primary)] focus:outline-none focus:border-[#4361ee] focus:bg-[var(--color-surface-900)] transition-colors"
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-[#94a3c8] mb-1.5">Amount (₹)</label>
+                  <label className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1.5">Amount (₹)</label>
                   <input
                     type="number"
                     required
                     min="0"
                     step="0.01"
                     placeholder="0.00"
-                    className="w-full bg-[#0a0f1c]/50 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#4361ee] focus:bg-[#0a0f1c] transition-colors"
+                    className="w-full bg-[var(--color-surface-900)]/50 border border-[var(--color-glass-border)] rounded-xl px-4 py-2.5 text-sm text-[var(--color-text-primary)] focus:outline-none focus:border-[#4361ee] focus:bg-[var(--color-surface-900)] transition-colors"
                     value={formData.amount}
                     onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-[#94a3c8] mb-1.5">Date</label>
+                  <label className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1.5">Date</label>
                   <input
                     type="date"
                     required
-                    className="w-full bg-[#0a0f1c]/50 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#4361ee] focus:bg-[#0a0f1c] transition-colors"
+                    className="w-full bg-[var(--color-surface-900)]/50 border border-[var(--color-glass-border)] rounded-xl px-4 py-2.5 text-sm text-[var(--color-text-primary)] focus:outline-none focus:border-[#4361ee] focus:bg-[var(--color-surface-900)] transition-colors"
                     value={formData.date}
                     onChange={(e) => setFormData({ ...formData, date: e.target.value })}
                   />

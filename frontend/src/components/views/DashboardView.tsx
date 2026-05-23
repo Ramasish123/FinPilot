@@ -121,7 +121,7 @@ function CustomTooltip({ active, payload, label }: any) {
   if (!active || !payload) return null;
   return (
     <div className="glass-card !p-3 !rounded-lg !border-white/10">
-      <p className="text-xs text-[#94a3c8] mb-1">{label}</p>
+      <p className="text-xs text-[var(--color-text-secondary)] mb-1">{label}</p>
       {payload.map((p: any, i: number) => (
         <p key={i} className="text-sm font-semibold" style={{ color: p.color }}>
           {p.name}: {formatCurrencyShort(p.value)}
@@ -250,10 +250,10 @@ export default function DashboardView({ onNavigate }: { onNavigate?: (tab: strin
                   {card.change}
                 </span>
               </div>
-              <p className="text-xl font-bold text-[#f0f4ff]">
+              <p className="text-xl font-bold text-[var(--color-text-primary)]">
                 {card.isCount ? card.value : formatCurrency(card.value)}
               </p>
-              <p className="text-xs text-[#5a6a8a] mt-1">{card.label}</p>
+              <p className="text-xs text-[var(--color-text-muted)] mt-1">{card.label}</p>
             </motion.div>
           );
         })}
@@ -265,8 +265,8 @@ export default function DashboardView({ onNavigate }: { onNavigate?: (tab: strin
         <motion.div variants={itemVariants} className="glass-card p-5 lg:col-span-2">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="text-sm font-semibold text-[#f0f4ff]">Revenue vs Expenses</h3>
-              <p className="text-xs text-[#5a6a8a] mt-0.5">Monthly comparison — FY 2025-26</p>
+              <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">Revenue vs Expenses</h3>
+              <p className="text-xs text-[var(--color-text-muted)] mt-0.5">Monthly comparison — FY 2025-26</p>
             </div>
             <div className="flex gap-4 text-xs">
               <span className="flex items-center gap-1.5">
@@ -295,9 +295,9 @@ export default function DashboardView({ onNavigate }: { onNavigate?: (tab: strin
                   <stop offset="95%" stopColor="#06d6a0" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-              <XAxis dataKey="month" tick={{ fill: "#5a6a8a", fontSize: 11 }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fill: "#5a6a8a", fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={(v) => formatCurrencyShort(v)} />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-glass-border)" />
+              <XAxis dataKey="month" tick={{ fill: "var(--color-text-muted)", fontSize: 11 }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fill: "var(--color-text-muted)", fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={(v) => formatCurrencyShort(v)} />
               <Tooltip content={<CustomTooltip />} />
               <Area type="monotone" dataKey="revenue" stroke="#4361ee" fill="url(#gradRevenue)" strokeWidth={2} name="Revenue" />
               <Area type="monotone" dataKey="expenses" stroke="#f43f5e" fill="none" strokeWidth={2} strokeDasharray="5 5" name="Expenses" />
@@ -308,8 +308,8 @@ export default function DashboardView({ onNavigate }: { onNavigate?: (tab: strin
 
         {/* Expense Breakdown */}
         <motion.div variants={itemVariants} className="glass-card p-5">
-          <h3 className="text-sm font-semibold text-[#f0f4ff] mb-1">Expense Breakdown</h3>
-          <p className="text-xs text-[#5a6a8a] mb-4">This month</p>
+          <h3 className="text-sm font-semibold text-[var(--color-text-primary)] mb-1">Expense Breakdown</h3>
+          <p className="text-xs text-[var(--color-text-muted)] mb-4">This month</p>
           <div className="flex justify-center mb-4">
             <ResponsiveContainer width={180} height={180}>
               <PieChart>
@@ -337,13 +337,13 @@ export default function DashboardView({ onNavigate }: { onNavigate?: (tab: strin
                     className="w-2.5 h-2.5 rounded-full"
                     style={{ background: item.color }}
                   />
-                  <span className="text-xs text-[#94a3c8]">{item.category}</span>
+                  <span className="text-xs text-[var(--color-text-secondary)]">{item.category}</span>
                 </div>
                 <div className="text-right">
-                  <span className="text-xs font-semibold text-[#f0f4ff]">
+                  <span className="text-xs font-semibold text-[var(--color-text-primary)]">
                     {formatCurrency(item.amount)}
                   </span>
-                  <span className="text-[10px] text-[#5a6a8a] ml-2">
+                  <span className="text-[10px] text-[var(--color-text-muted)] ml-2">
                     {item.percentage}%
                   </span>
                 </div>
@@ -359,12 +359,12 @@ export default function DashboardView({ onNavigate }: { onNavigate?: (tab: strin
         <motion.div variants={itemVariants} className="glass-card p-5">
           <div className="flex items-center gap-2 mb-4">
             <BrainCircuit className="w-4 h-4 text-[#4361ee]" />
-            <h3 className="text-sm font-semibold text-[#f0f4ff]">Financial Health</h3>
+            <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">Financial Health</h3>
           </div>
           <div className="flex items-center justify-center mb-4">
             <div className="relative w-32 h-32">
               <svg className="w-full h-full -rotate-90" viewBox="0 0 120 120">
-                <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="8" />
+                <circle cx="60" cy="60" r="52" fill="none" stroke="var(--color-glass-border)" strokeWidth="8" />
                 <circle
                   cx="60" cy="60" r="52" fill="none" stroke="url(#healthGrad)" strokeWidth="8"
                   strokeLinecap="round"
@@ -378,7 +378,7 @@ export default function DashboardView({ onNavigate }: { onNavigate?: (tab: strin
                 </defs>
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-3xl font-bold text-[#f0f4ff]">{mockFinancialHealth.score}</span>
+                <span className="text-3xl font-bold text-[var(--color-text-primary)]">{mockFinancialHealth.score}</span>
                 <span className="text-xs font-semibold text-[#06d6a0]">{mockFinancialHealth.grade}</span>
               </div>
             </div>
@@ -387,8 +387,8 @@ export default function DashboardView({ onNavigate }: { onNavigate?: (tab: strin
             {mockFinancialHealth.factors.map((f) => (
               <div key={f.name}>
                 <div className="flex justify-between mb-1">
-                  <span className="text-xs text-[#94a3c8]">{f.name}</span>
-                  <span className="text-xs font-semibold text-[#f0f4ff]">{f.score}%</span>
+                  <span className="text-xs text-[var(--color-text-secondary)]">{f.name}</span>
+                  <span className="text-xs font-semibold text-[var(--color-text-primary)]">{f.score}%</span>
                 </div>
                 <div className="progress-bar">
                   <div
@@ -414,27 +414,27 @@ export default function DashboardView({ onNavigate }: { onNavigate?: (tab: strin
         {/* Cash Flow */}
         <motion.div variants={itemVariants} className="glass-card p-5">
           <div className="flex items-center justify-between mb-1">
-            <h3 className="text-sm font-semibold text-[#f0f4ff]">Cash Flow</h3>
+            <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">Cash Flow</h3>
             {isAnalyzingCashFlow && (
               <span className="flex items-center gap-1.5 text-[10px] text-[#06d6a0] bg-[#06d6a0]/10 px-2 py-0.5 rounded border border-[#06d6a0]/20">
                 <Sparkles className="w-3 h-3 animate-pulse" /> AI Processing
               </span>
             )}
           </div>
-          <p className="text-xs text-[#5a6a8a] mb-4">Inflow vs Outflow</p>
+          <p className="text-xs text-[var(--color-text-muted)] mb-4">Inflow vs Outflow</p>
           {isAnalyzingCashFlow ? (
             <div className="flex flex-col items-center justify-center h-[220px]">
               <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 2, ease: "linear" }}>
                 <Sparkles className="w-6 h-6 text-[#06d6a0] mb-3" />
               </motion.div>
-              <p className="text-xs text-[#94a3c8]">Analyzing transactions...</p>
+              <p className="text-xs text-[var(--color-text-secondary)]">Analyzing transactions...</p>
             </div>
           ) : (
             <ResponsiveContainer width="100%" height={220}>
               <BarChart data={cashFlowData} barGap={4}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-                <XAxis dataKey="month" tick={{ fill: "#5a6a8a", fontSize: 11 }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fill: "#5a6a8a", fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={(v) => formatCurrencyShort(v)} />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--color-glass-border)" />
+                <XAxis dataKey="month" tick={{ fill: "var(--color-text-muted)", fontSize: 11 }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fill: "var(--color-text-muted)", fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={(v) => formatCurrencyShort(v)} />
                 <Tooltip content={<CustomTooltip />} />
                 <Bar dataKey="inflow" fill="#4361ee" radius={[4, 4, 0, 0]} name="Inflow" />
                 <Bar dataKey="outflow" fill="#f43f5e" radius={[4, 4, 0, 0]} name="Outflow" opacity={0.7} />
@@ -445,15 +445,15 @@ export default function DashboardView({ onNavigate }: { onNavigate?: (tab: strin
 
         {/* Income Sources */}
         <motion.div variants={itemVariants} className="glass-card p-5">
-          <h3 className="text-sm font-semibold text-[#f0f4ff] mb-1">Income Sources</h3>
-          <p className="text-xs text-[#5a6a8a] mb-4">AI-detected sources</p>
+          <h3 className="text-sm font-semibold text-[var(--color-text-primary)] mb-1">Income Sources</h3>
+          <p className="text-xs text-[var(--color-text-muted)] mb-4">AI-detected sources</p>
           <div className="space-y-3">
             {mockIncomeSourcesData.map((src) => (
               <div key={src.source} className="flex items-center gap-3">
                 <div className="flex-1">
                   <div className="flex justify-between mb-1">
-                    <span className="text-xs font-medium text-[#f0f4ff]">{src.source}</span>
-                    <span className="text-xs font-semibold text-[#f0f4ff]">{formatCurrency(src.amount)}</span>
+                    <span className="text-xs font-medium text-[var(--color-text-primary)]">{src.source}</span>
+                    <span className="text-xs font-semibold text-[var(--color-text-primary)]">{formatCurrency(src.amount)}</span>
                   </div>
                   <div className="progress-bar">
                     <div
@@ -462,14 +462,14 @@ export default function DashboardView({ onNavigate }: { onNavigate?: (tab: strin
                     />
                   </div>
                   <div className="flex justify-between mt-1">
-                    <span className="text-[10px] text-[#5a6a8a]">{src.percentage}% of total</span>
+                    <span className="text-[10px] text-[var(--color-text-muted)]">{src.percentage}% of total</span>
                     <span
                       className={`text-[10px] font-semibold ${
                         src.trend === "up"
                           ? "text-[#10b981]"
                           : src.trend === "down"
                           ? "text-[#f43f5e]"
-                          : "text-[#94a3c8]"
+                          : "text-[var(--color-text-secondary)]"
                       }`}
                     >
                       {src.trend === "up" ? "↑ Growing" : src.trend === "down" ? "↓ Declining" : "→ Stable"}
@@ -489,7 +489,7 @@ export default function DashboardView({ onNavigate }: { onNavigate?: (tab: strin
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-[#f59e0b]" />
-              <h3 className="text-sm font-semibold text-[#f0f4ff]">AI Insights</h3>
+              <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">AI Insights</h3>
             </div>
             <span className="badge badge-warning">
               {mockInsights.filter((i) => i.priority === "high").length} High Priority
@@ -514,8 +514,8 @@ export default function DashboardView({ onNavigate }: { onNavigate?: (tab: strin
                     }`}
                   />
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-semibold text-[#f0f4ff] mb-0.5">{insight.title}</p>
-                    <p className="text-[11px] text-[#94a3c8] line-clamp-2">{insight.description}</p>
+                    <p className="text-xs font-semibold text-[var(--color-text-primary)] mb-0.5">{insight.title}</p>
+                    <p className="text-[11px] text-[var(--color-text-secondary)] line-clamp-2">{insight.description}</p>
                     <p className="text-[10px] font-semibold text-[#06d6a0] mt-1">
                       Impact: {insight.impact}
                     </p>
@@ -529,7 +529,7 @@ export default function DashboardView({ onNavigate }: { onNavigate?: (tab: strin
         {/* Recent Transactions */}
         <motion.div variants={itemVariants} className="glass-card p-5">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold text-[#f0f4ff]">Recent Transactions</h3>
+            <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">Recent Transactions</h3>
             <button
               onClick={() => onNavigate && onNavigate("transactions")}
               className="text-xs text-[#4361ee] hover:text-[#6381fc] font-medium flex items-center gap-1"
@@ -557,13 +557,13 @@ export default function DashboardView({ onNavigate }: { onNavigate?: (tab: strin
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-medium text-[#f0f4ff] truncate">{txn.merchant}</p>
-                  <p className="text-[10px] text-[#5a6a8a]">{txn.aiCategory || txn.category} • {txn.date}</p>
+                  <p className="text-xs font-medium text-[var(--color-text-primary)] truncate">{txn.merchant}</p>
+                  <p className="text-[10px] text-[var(--color-text-muted)]">{txn.aiCategory || txn.category} • {txn.date}</p>
                 </div>
                 <div className="text-right">
                   <p
                     className={`text-sm font-semibold ${
-                      txn.type === "credit" ? "text-[#10b981]" : "text-[#f0f4ff]"
+                      txn.type === "credit" ? "text-[#10b981]" : "text-[var(--color-text-primary)]"
                     }`}
                   >
                     {txn.type === "credit" ? "+" : "-"}{formatCurrency(txn.amount)}

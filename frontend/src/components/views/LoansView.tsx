@@ -125,7 +125,7 @@ export default function LoansView() {
   return (
     <motion.div variants={containerVariants} initial="hidden" animate="show" className="p-6 space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold text-[#f0f4ff]">Loans & Credit</h2>
+        <h2 className="text-xl font-bold text-[var(--color-text-primary)]">Loans & Credit</h2>
         <button
           onClick={() => setIsApplyModalOpen(true)}
           className="btn btn-primary flex items-center gap-2"
@@ -137,17 +137,17 @@ export default function LoansView() {
       {/* Summary */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <motion.div variants={itemVariants} className="glass-card metric-card rose p-4">
-          <p className="text-xs text-[#5a6a8a] mb-1">Total Outstanding</p>
+          <p className="text-xs text-[var(--color-text-muted)] mb-1">Total Outstanding</p>
           <p className="text-2xl font-bold text-[#f43f5e]">{formatCurrency(totalOutstanding)}</p>
-          <p className="text-xs text-[#94a3c8] mt-1">{loans.length} active loans</p>
+          <p className="text-xs text-[var(--color-text-secondary)] mt-1">{loans.length} active loans</p>
         </motion.div>
         <motion.div variants={itemVariants} className="glass-card metric-card amber p-4">
-          <p className="text-xs text-[#5a6a8a] mb-1">Monthly EMI</p>
+          <p className="text-xs text-[var(--color-text-muted)] mb-1">Monthly EMI</p>
           <p className="text-2xl font-bold text-[#f59e0b]">{formatCurrency(totalEMI)}</p>
-          <p className="text-xs text-[#94a3c8] mt-1">Combined EMI payment</p>
+          <p className="text-xs text-[var(--color-text-secondary)] mt-1">Combined EMI payment</p>
         </motion.div>
         <motion.div variants={itemVariants} className="glass-card metric-card blue p-4">
-          <p className="text-xs text-[#5a6a8a] mb-1">Debt-to-Income</p>
+          <p className="text-xs text-[var(--color-text-muted)] mb-1">Debt-to-Income</p>
           <p className="text-2xl font-bold text-[#4361ee]">28.3%</p>
           <div className="flex items-center gap-1 mt-1">
             <span className="badge badge-warning text-[10px] !py-0 !px-2">Moderate</span>
@@ -163,7 +163,7 @@ export default function LoansView() {
           </div>
         ) : loans.length === 0 ? (
           <div className="col-span-full py-12 text-center">
-            <p className="text-[#5a6a8a]">No active loans found.</p>
+            <p className="text-[var(--color-text-muted)]">No active loans found.</p>
           </div>
         ) : (
           loans.map((loan) => {
@@ -187,14 +187,14 @@ export default function LoansView() {
                   </span>
                 </div>
 
-                <h4 className="text-sm font-semibold text-[#f0f4ff] mb-1">{loan.name}</h4>
-                <p className="text-xs text-[#5a6a8a] mb-4">Interest Rate: {loan.rate}% p.a.</p>
+                <h4 className="text-sm font-semibold text-[var(--color-text-primary)] mb-1">{loan.name}</h4>
+                <p className="text-xs text-[var(--color-text-muted)] mb-4">Interest Rate: {loan.rate}% p.a.</p>
 
                 {/* Progress */}
                 <div className="mb-4">
                   <div className="flex justify-between mb-1.5">
-                    <span className="text-[10px] text-[#94a3c8]">Paid: {paidPercent.toFixed(1)}%</span>
-                    <span className="text-[10px] text-[#94a3c8]">{formatCurrency(loan.principal)}</span>
+                    <span className="text-[10px] text-[var(--color-text-secondary)]">Paid: {paidPercent.toFixed(1)}%</span>
+                    <span className="text-[10px] text-[var(--color-text-secondary)]">{formatCurrency(loan.principal)}</span>
                   </div>
                   <div className="progress-bar !h-2">
                     <div
@@ -207,18 +207,18 @@ export default function LoansView() {
                 {/* Details Grid */}
                 <div className="grid grid-cols-2 gap-3 text-center flex-grow">
                   <div className="p-2.5 rounded-xl bg-white/[0.02]">
-                    <p className="text-[10px] text-[#5a6a8a] mb-0.5">Remaining</p>
-                    <p className="text-sm font-bold text-[#f0f4ff]">{formatCurrency(loan.remaining)}</p>
+                    <p className="text-[10px] text-[var(--color-text-muted)] mb-0.5">Remaining</p>
+                    <p className="text-sm font-bold text-[var(--color-text-primary)]">{formatCurrency(loan.remaining)}</p>
                   </div>
                   <div className="p-2.5 rounded-xl bg-white/[0.02]">
-                    <p className="text-[10px] text-[#5a6a8a] mb-0.5">Monthly EMI</p>
+                    <p className="text-[10px] text-[var(--color-text-muted)] mb-0.5">Monthly EMI</p>
                     <p className="text-sm font-bold text-[#f59e0b]">{formatCurrency(loan.emi)}</p>
                   </div>
                 </div>
 
                 {/* Next Due and Payment Button */}
                 <div className="flex items-center justify-between mt-4 pt-3 border-t border-white/[0.04]">
-                  <div className="flex items-center gap-2 text-xs text-[#94a3c8]">
+                  <div className="flex items-center gap-2 text-xs text-[var(--color-text-secondary)]">
                     <Calendar className="w-3.5 h-3.5" />
                     Next: {new Date(loan.nextDue).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
                   </div>
@@ -241,15 +241,15 @@ export default function LoansView() {
       <motion.div variants={itemVariants} className="glass-card p-5">
         <div className="flex items-center gap-2 mb-4">
           <Calculator className="w-4 h-4 text-[#06d6a0]" />
-          <h3 className="text-sm font-semibold text-[#f0f4ff]">AI Loan Recommendations</h3>
+          <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">AI Loan Recommendations</h3>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.04]">
             <div className="flex items-center gap-2 mb-2">
               <ArrowDownRight className="w-4 h-4 text-[#10b981]" />
-              <span className="text-xs font-semibold text-[#f0f4ff]">Prepayment Opportunity</span>
+              <span className="text-xs font-semibold text-[var(--color-text-primary)]">Prepayment Opportunity</span>
             </div>
-            <p className="text-[11px] text-[#94a3c8]">
+            <p className="text-[11px] text-[var(--color-text-secondary)]">
               Making a ₹2L lump sum payment on your Car Loan will save ₹48,000 in interest and close it 8 months early.
             </p>
             <p className="text-xs font-semibold text-[#06d6a0] mt-2">Save ₹48,000</p>
@@ -257,9 +257,9 @@ export default function LoansView() {
           <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.04]">
             <div className="flex items-center gap-2 mb-2">
               <TrendingDown className="w-4 h-4 text-[#4361ee]" />
-              <span className="text-xs font-semibold text-[#f0f4ff]">Refinancing Option</span>
+              <span className="text-xs font-semibold text-[var(--color-text-primary)]">Refinancing Option</span>
             </div>
-            <p className="text-[11px] text-[#94a3c8]">
+            <p className="text-[11px] text-[var(--color-text-secondary)]">
               Your Home Loan at 8.5% can be refinanced to 7.9% with SBI. Monthly savings of ₹3,200 over remaining tenure.
             </p>
             <p className="text-xs font-semibold text-[#4361ee] mt-2">Save ₹3,200/month</p>
@@ -267,9 +267,9 @@ export default function LoansView() {
           <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.04]">
             <div className="flex items-center gap-2 mb-2">
               <AlertTriangle className="w-4 h-4 text-[#f59e0b]" />
-              <span className="text-xs font-semibold text-[#f0f4ff]">Debt Stress Alert</span>
+              <span className="text-xs font-semibold text-[var(--color-text-primary)]">Debt Stress Alert</span>
             </div>
-            <p className="text-[11px] text-[#94a3c8]">
+            <p className="text-[11px] text-[var(--color-text-secondary)]">
               Your debt-to-income ratio of 28.3% is approaching the 30% threshold. Avoid taking additional debt for 6 months.
             </p>
             <p className="text-xs font-semibold text-[#f59e0b] mt-2">Caution Advised</p>
@@ -289,29 +289,29 @@ export default function LoansView() {
             >
               <button
                 onClick={() => setIsApplyModalOpen(false)}
-                className="absolute top-4 right-4 p-1.5 rounded-lg hover:bg-white/10 text-[#94a3c8] transition-colors"
+                className="absolute top-4 right-4 p-1.5 rounded-lg hover:bg-white/10 text-[var(--color-text-secondary)] transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
-              <h2 className="text-xl font-bold text-[#f0f4ff] mb-6">Apply for Loan</h2>
+              <h2 className="text-xl font-bold text-[var(--color-text-primary)] mb-6">Apply for Loan</h2>
               <form onSubmit={handleApply} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-[#94a3c8] mb-1">Loan Name</label>
+                  <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">Loan Name</label>
                   <input
                     required
                     type="text"
                     value={applyForm.name}
                     onChange={(e) => setApplyForm({ ...applyForm, name: e.target.value })}
-                    className="w-full bg-[#0b1221] border border-white/10 rounded-xl px-4 py-2.5 text-[#f0f4ff] focus:outline-none focus:border-[#4361ee] transition-colors"
+                    className="w-full bg-[var(--color-surface-900)] border border-[var(--color-glass-border)] rounded-xl px-4 py-2.5 text-[var(--color-text-primary)] focus:outline-none focus:border-[#4361ee] transition-colors"
                     placeholder="e.g. Home Renovation"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[#94a3c8] mb-1">Type</label>
+                  <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">Type</label>
                   <select
                     value={applyForm.type}
                     onChange={(e) => setApplyForm({ ...applyForm, type: e.target.value })}
-                    className="w-full bg-[#0b1221] border border-white/10 rounded-xl px-4 py-2.5 text-[#f0f4ff] focus:outline-none focus:border-[#4361ee] transition-colors appearance-none"
+                    className="w-full bg-[var(--color-surface-900)] border border-[var(--color-glass-border)] rounded-xl px-4 py-2.5 text-[var(--color-text-primary)] focus:outline-none focus:border-[#4361ee] transition-colors appearance-none"
                   >
                     <option value="home">Home</option>
                     <option value="car">Car</option>
@@ -321,37 +321,37 @@ export default function LoansView() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[#94a3c8] mb-1">Amount</label>
+                  <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">Amount</label>
                   <input
                     required
                     type="number"
                     value={applyForm.amount}
                     onChange={(e) => setApplyForm({ ...applyForm, amount: e.target.value })}
-                    className="w-full bg-[#0b1221] border border-white/10 rounded-xl px-4 py-2.5 text-[#f0f4ff] focus:outline-none focus:border-[#4361ee] transition-colors"
+                    className="w-full bg-[var(--color-surface-900)] border border-[var(--color-glass-border)] rounded-xl px-4 py-2.5 text-[var(--color-text-primary)] focus:outline-none focus:border-[#4361ee] transition-colors"
                     placeholder="e.g. 500000"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-[#94a3c8] mb-1">Interest Rate (%)</label>
+                    <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">Interest Rate (%)</label>
                     <input
                       required
                       type="number"
                       step="0.1"
                       value={applyForm.rate}
                       onChange={(e) => setApplyForm({ ...applyForm, rate: e.target.value })}
-                      className="w-full bg-[#0b1221] border border-white/10 rounded-xl px-4 py-2.5 text-[#f0f4ff] focus:outline-none focus:border-[#4361ee] transition-colors"
+                      className="w-full bg-[var(--color-surface-900)] border border-[var(--color-glass-border)] rounded-xl px-4 py-2.5 text-[var(--color-text-primary)] focus:outline-none focus:border-[#4361ee] transition-colors"
                       placeholder="e.g. 8.5"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[#94a3c8] mb-1">Term (Months)</label>
+                    <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">Term (Months)</label>
                     <input
                       required
                       type="number"
                       value={applyForm.term}
                       onChange={(e) => setApplyForm({ ...applyForm, term: e.target.value })}
-                      className="w-full bg-[#0b1221] border border-white/10 rounded-xl px-4 py-2.5 text-[#f0f4ff] focus:outline-none focus:border-[#4361ee] transition-colors"
+                      className="w-full bg-[var(--color-surface-900)] border border-[var(--color-glass-border)] rounded-xl px-4 py-2.5 text-[var(--color-text-primary)] focus:outline-none focus:border-[#4361ee] transition-colors"
                       placeholder="e.g. 60"
                     />
                   </div>
@@ -374,20 +374,20 @@ export default function LoansView() {
             >
               <button
                 onClick={() => setIsPaymentModalOpen(false)}
-                className="absolute top-4 right-4 p-1.5 rounded-lg hover:bg-white/10 text-[#94a3c8] transition-colors"
+                className="absolute top-4 right-4 p-1.5 rounded-lg hover:bg-white/10 text-[var(--color-text-secondary)] transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
-              <h2 className="text-xl font-bold text-[#f0f4ff] mb-6">Make Payment</h2>
+              <h2 className="text-xl font-bold text-[var(--color-text-primary)] mb-6">Make Payment</h2>
               <form onSubmit={handlePayment} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-[#94a3c8] mb-1">Amount</label>
+                  <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">Amount</label>
                   <input
                     required
                     type="number"
                     value={paymentAmount}
                     onChange={(e) => setPaymentAmount(e.target.value)}
-                    className="w-full bg-[#0b1221] border border-white/10 rounded-xl px-4 py-2.5 text-[#f0f4ff] focus:outline-none focus:border-[#4361ee] transition-colors"
+                    className="w-full bg-[var(--color-surface-900)] border border-[var(--color-glass-border)] rounded-xl px-4 py-2.5 text-[var(--color-text-primary)] focus:outline-none focus:border-[#4361ee] transition-colors"
                     placeholder="Enter amount"
                   />
                 </div>

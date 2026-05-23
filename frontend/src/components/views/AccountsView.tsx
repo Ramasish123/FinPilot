@@ -117,8 +117,8 @@ export default function AccountsView() {
       {/* Header */}
       <motion.div variants={itemVariants} className="flex items-center justify-between">
         <div>
-          <h3 className="text-xl font-bold text-[#f0f4ff]">Connected Accounts</h3>
-          <p className="text-sm text-[#5a6a8a] mt-1">
+          <h3 className="text-xl font-bold text-[var(--color-text-primary)]">Connected Accounts</h3>
+          <p className="text-sm text-[var(--color-text-muted)] mt-1">
             Total Balance: <span className="text-[#06d6a0] font-bold">{formatCurrency(totalBalance)}</span>
           </p>
         </div>
@@ -145,7 +145,7 @@ export default function AccountsView() {
               {/* Top */}
               <div className="flex items-start justify-between mb-4">
                 <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${gradient} flex items-center justify-center`}>
-                  <Icon className="w-5 h-5 text-white" />
+                  <Icon className="w-5 h-5 text-[var(--color-text-primary)]" />
                 </div>
                 <div className="flex items-center gap-2">
                   {account.connected && (
@@ -162,11 +162,11 @@ export default function AccountsView() {
                     className="p-1.5 rounded-lg hover:bg-white/[0.05]"
                     title="Refresh Account"
                   >
-                    <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? "text-[#4361ee]" : "text-[#5a6a8a]"}`} />
+                    <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? "text-[#4361ee]" : "text-[var(--color-text-muted)]"}`} />
                   </motion.button>
                   <motion.button
                     onClick={() => handleUnlink(account.id)}
-                    className="p-1.5 rounded-lg hover:bg-red-500/10 text-[#5a6a8a] hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="p-1.5 rounded-lg hover:bg-red-500/10 text-[var(--color-text-muted)] hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"
                     title="Unlink Account"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
@@ -175,19 +175,19 @@ export default function AccountsView() {
               </div>
 
               {/* Details */}
-              <h4 className="text-sm font-semibold text-[#f0f4ff] mb-0.5">
-                {account.name} {account.accountNumber && <span className="text-[#5a6a8a] text-xs font-normal">({account.accountNumber})</span>}
+              <h4 className="text-sm font-semibold text-[var(--color-text-primary)] mb-0.5">
+                {account.name} {account.accountNumber && <span className="text-[var(--color-text-muted)] text-xs font-normal">({account.accountNumber})</span>}
               </h4>
-              <p className="text-xs text-[#5a6a8a] mb-3">{account.institution}</p>
+              <p className="text-xs text-[var(--color-text-muted)] mb-3">{account.institution}</p>
 
               {/* Balance */}
-              <p className={`text-2xl font-bold ${account.balance < 0 ? "text-[#f43f5e]" : "text-[#f0f4ff]"}`}>
+              <p className={`text-2xl font-bold ${account.balance < 0 ? "text-[#f43f5e]" : "text-[var(--color-text-primary)]"}`}>
                 {formatCurrency(account.balance)}
               </p>
 
               {/* Footer */}
               <div className="flex items-center justify-between mt-4 pt-3 border-t border-white/[0.04]">
-                <span className="text-[10px] text-[#5a6a8a]">
+                <span className="text-[10px] text-[var(--color-text-muted)]">
                   Last synced: {account.lastSync}
                 </span>
                 <span className="text-[10px] text-[#4361ee] font-medium capitalize">
@@ -203,26 +203,26 @@ export default function AccountsView() {
           variants={itemVariants}
           whileHover={{ scale: 1.02 }}
           onClick={() => setIsModalOpen(true)}
-          className="glass-card p-5 cursor-pointer flex flex-col items-center justify-center min-h-[200px] !border-dashed !border-white/10 hover:!border-[#4361ee]/30"
+          className="glass-card p-5 cursor-pointer flex flex-col items-center justify-center min-h-[200px] !border-dashed !border-[var(--color-glass-border)] hover:!border-[#4361ee]/30"
         >
           <div className="w-14 h-14 rounded-2xl bg-white/[0.03] flex items-center justify-center mb-3">
-            <Plus className="w-6 h-6 text-[#5a6a8a]" />
+            <Plus className="w-6 h-6 text-[var(--color-text-muted)]" />
           </div>
-          <p className="text-sm font-medium text-[#94a3c8]">Link New Account</p>
-          <p className="text-xs text-[#5a6a8a] mt-1">Bank, Credit Card, Wallet</p>
+          <p className="text-sm font-medium text-[var(--color-text-secondary)]">Link New Account</p>
+          <p className="text-xs text-[var(--color-text-muted)] mt-1">Bank, Credit Card, Wallet</p>
         </motion.div>
       </div>
 
       {/* Supported Banks */}
       <motion.div variants={itemVariants} className="glass-card p-5">
-        <h4 className="text-sm font-semibold text-[#f0f4ff] mb-4 flex items-center gap-2">
+        <h4 className="text-sm font-semibold text-[var(--color-text-primary)] mb-4 flex items-center gap-2">
           <Link2 className="w-4 h-4 text-[#4361ee]" />
           Supported Integrations
         </h4>
         <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-3">
           {["HDFC Bank", "ICICI Bank", "SBI", "Axis Bank", "Kotak", "Yes Bank", "Paytm", "PhonePe", "Google Pay", "Zerodha", "Groww", "CRED"].map((bank) => (
             <div key={bank} className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.04] text-center hover:border-[#4361ee]/20 transition-colors cursor-pointer">
-              <p className="text-xs font-medium text-[#94a3c8]">{bank}</p>
+              <p className="text-xs font-medium text-[var(--color-text-secondary)]">{bank}</p>
             </div>
           ))}
         </div>
@@ -245,32 +245,32 @@ export default function AccountsView() {
             >
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="absolute top-4 right-4 p-2 text-[#5a6a8a] hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+                className="absolute top-4 right-4 p-2 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] hover:bg-white/5 rounded-lg transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
               
-              <h3 className="text-xl font-bold text-white mb-6">Link New Account</h3>
+              <h3 className="text-xl font-bold text-[var(--color-text-primary)] mb-6">Link New Account</h3>
               
               <form onSubmit={handleLinkAccount} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-[#94a3c8] mb-1">Institution Name</label>
+                  <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">Institution Name</label>
                   <input
                     type="text"
                     required
                     value={formData.institution}
                     onChange={(e) => setFormData({ ...formData, institution: e.target.value })}
-                    className="w-full bg-[#0b0f19] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#4361ee]/50"
+                    className="w-full bg-[var(--color-surface-900)] border border-[var(--color-glass-border)] rounded-xl px-4 py-3 text-[var(--color-text-primary)] focus:outline-none focus:border-[#4361ee]/50"
                     placeholder="e.g. HDFC Bank, Zerodha"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[#94a3c8] mb-1">Account Type</label>
+                  <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">Account Type</label>
                   <select
                     value={formData.type}
                     onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                    className="w-full bg-[#0b0f19] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#4361ee]/50 appearance-none"
+                    className="w-full bg-[var(--color-surface-900)] border border-[var(--color-glass-border)] rounded-xl px-4 py-3 text-[var(--color-text-primary)] focus:outline-none focus:border-[#4361ee]/50 appearance-none"
                   >
                     <option value="savings">Savings Account</option>
                     <option value="current">Current Account</option>
@@ -281,24 +281,24 @@ export default function AccountsView() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[#94a3c8] mb-1">Account Name (Optional)</label>
+                  <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">Account Name (Optional)</label>
                   <input
                     type="text"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full bg-[#0b0f19] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#4361ee]/50"
+                    className="w-full bg-[var(--color-surface-900)] border border-[var(--color-glass-border)] rounded-xl px-4 py-3 text-[var(--color-text-primary)] focus:outline-none focus:border-[#4361ee]/50"
                     placeholder="e.g. Salary Account"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[#94a3c8] mb-1">Account Number (Last 4 digits)</label>
+                  <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">Account Number (Last 4 digits)</label>
                   <input
                     type="text"
                     maxLength={4}
                     value={formData.accountNumber}
                     onChange={(e) => setFormData({ ...formData, accountNumber: e.target.value })}
-                    className="w-full bg-[#0b0f19] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#4361ee]/50"
+                    className="w-full bg-[var(--color-surface-900)] border border-[var(--color-glass-border)] rounded-xl px-4 py-3 text-[var(--color-text-primary)] focus:outline-none focus:border-[#4361ee]/50"
                     placeholder="e.g. 1234"
                   />
                 </div>
@@ -307,7 +307,7 @@ export default function AccountsView() {
                   <button
                     type="button"
                     onClick={() => setIsModalOpen(false)}
-                    className="flex-1 px-4 py-3 rounded-xl border border-white/10 text-white font-medium hover:bg-white/5 transition-colors"
+                    className="flex-1 px-4 py-3 rounded-xl border border-[var(--color-glass-border)] text-[var(--color-text-primary)] font-medium hover:bg-white/5 transition-colors"
                   >
                     Cancel
                   </button>

@@ -75,12 +75,12 @@ export default function TopBar({ title, subtitle, user, onLogout, onNavigate }: 
     : dummySearchResults;
 
   return (
-    <header className="h-16 border-b border-white/[0.06] bg-[#0a0e1a]/60 backdrop-blur-xl sticky top-0 z-30 flex items-center justify-between px-6">
+    <header className="h-16 border-b border-[var(--color-glass-border)] bg-[var(--color-surface-900)]/60 backdrop-blur-xl sticky top-0 z-30 flex items-center justify-between px-6 transition-colors duration-500 ease-in-out">
       {/* Left: Title */}
       <div>
-        <h2 className="text-lg font-semibold text-[#f0f4ff]">{title}</h2>
+        <h2 className="text-lg font-semibold text-[var(--color-text-primary)]">{title}</h2>
         {subtitle && (
-          <p className="text-xs text-[#5a6a8a] mt-0.5">{subtitle}</p>
+          <p className="text-xs text-[var(--color-text-muted)] mt-0.5">{subtitle}</p>
         )}
       </div>
 
@@ -88,16 +88,16 @@ export default function TopBar({ title, subtitle, user, onLogout, onNavigate }: 
       <div className="flex items-center gap-3">
         {/* Search */}
         <div className="relative hidden md:block" ref={searchRef}>
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#5a6a8a]" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-text-muted)]" />
           <input
             type="text"
             placeholder="Search transactions, insights..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onFocus={() => setIsSearchFocused(true)}
-            className="input-field pl-10 w-72 !py-2 !text-sm !bg-[#151d35]/60"
+            className="input-field pl-10 w-72 !py-2 !text-sm bg-[var(--color-surface-700)]/60 transition-colors duration-500 ease-in-out text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)]"
           />
-          <kbd className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-[#5a6a8a] bg-[#1c2642] px-1.5 py-0.5 rounded">
+          <kbd className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-[var(--color-text-muted)] bg-[var(--color-surface-600)] px-1.5 py-0.5 rounded transition-colors duration-500 ease-in-out">
             ⌘K
           </kbd>
 
@@ -109,17 +109,17 @@ export default function TopBar({ title, subtitle, user, onLogout, onNavigate }: 
                 animate="visible"
                 exit="exit"
                 transition={{ duration: 0.2 }}
-                className="absolute left-0 mt-2 w-full rounded-xl bg-[#151d35] border border-white/[0.06] shadow-xl py-2 overflow-hidden z-50"
+                className="absolute left-0 mt-2 w-full rounded-xl bg-[var(--color-surface-700)] border border-[var(--color-glass-border)] shadow-xl py-2 overflow-hidden z-50 transition-colors duration-500 ease-in-out"
               >
                 {filteredResults.length > 0 ? (
                   filteredResults.map((result) => (
-                    <div key={result.id} className="px-4 py-2 hover:bg-white/[0.03] cursor-pointer flex flex-col">
-                      <span className="text-sm text-[#f0f4ff]">{result.title}</span>
-                      <span className="text-[10px] text-[#5a6a8a]">{result.type}</span>
+                    <div key={result.id} className="px-4 py-2 hover:bg-[var(--color-glass-white)] cursor-pointer flex flex-col transition-colors">
+                      <span className="text-sm text-[var(--color-text-primary)]">{result.title}</span>
+                      <span className="text-[10px] text-[var(--color-text-muted)]">{result.type}</span>
                     </div>
                   ))
                 ) : (
-                  <div className="px-4 py-3 text-sm text-[#5a6a8a] text-center">
+                  <div className="px-4 py-3 text-sm text-[var(--color-text-muted)] text-center">
                     No results found
                   </div>
                 )}
@@ -143,9 +143,9 @@ export default function TopBar({ title, subtitle, user, onLogout, onNavigate }: 
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setShowNotifications(!showNotifications)}
-            className="w-9 h-9 rounded-xl bg-[#151d35] border border-white/[0.06] flex items-center justify-center relative"
+            className="w-9 h-9 rounded-xl bg-[var(--color-surface-800)] border border-[var(--color-glass-border)] flex items-center justify-center relative"
           >
-            <Bell className="w-4 h-4 text-[#94a3c8]" />
+            <Bell className="w-4 h-4 text-[var(--color-text-secondary)]" />
             {unreadCount > 0 && (
               <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#f43f5e] rounded-full text-[9px] text-white flex items-center justify-center font-bold">
                 {unreadCount}
@@ -161,10 +161,10 @@ export default function TopBar({ title, subtitle, user, onLogout, onNavigate }: 
                 animate="visible"
                 exit="exit"
                 transition={{ duration: 0.2 }}
-                className="absolute right-0 mt-2 w-80 rounded-xl bg-[#151d35] border border-white/[0.06] shadow-xl py-2 z-50"
+                className="absolute right-0 mt-2 w-80 rounded-xl bg-[var(--color-surface-800)] border border-[var(--color-glass-border)] shadow-xl py-2 z-50"
               >
-                <div className="px-4 py-2 border-b border-white/[0.06]">
-                  <h3 className="text-sm font-semibold text-[#f0f4ff]">Notifications</h3>
+                <div className="px-4 py-2 border-b border-[var(--color-glass-border)]">
+                  <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">Notifications</h3>
                 </div>
                 <div className="flex flex-col">
                   {notifications.slice(0, 4).map((notif) => (
@@ -173,16 +173,16 @@ export default function TopBar({ title, subtitle, user, onLogout, onNavigate }: 
                       onClick={() => markAsRead(notif.id)}
                       className={`px-4 py-3 hover:bg-white/[0.03] cursor-pointer flex flex-col gap-1 border-b border-white/[0.02] last:border-0 ${!notif.read ? 'bg-white/[0.02]' : ''}`}
                     >
-                      <span className={`text-sm ${!notif.read ? 'text-[#f0f4ff] font-medium' : 'text-[#94a3c8]'}`}>{notif.title}</span>
-                      <span className="text-[10px] text-[#5a6a8a]">{notif.time}</span>
+                      <span className={`text-sm ${!notif.read ? 'text-[var(--color-text-primary)] font-medium' : 'text-[var(--color-text-secondary)]'}`}>{notif.title}</span>
+                      <span className="text-[10px] text-[var(--color-text-muted)]">{notif.time}</span>
                     </div>
                   ))}
                   {notifications.length === 0 && (
-                    <div className="px-4 py-3 text-sm text-[#5a6a8a] text-center">No notifications</div>
+                    <div className="px-4 py-3 text-sm text-[var(--color-text-muted)] text-center">No notifications</div>
                   )}
                 </div>
-                <div className="px-4 pt-2 mt-1 border-t border-white/[0.06]">
-                  <button onClick={() => { setShowNotifications(false); setShowAllNotificationsModal(true); }} className="text-xs text-[#4361ee] hover:text-[#f0f4ff] w-full text-center py-1">View all</button>
+                <div className="px-4 pt-2 mt-1 border-t border-[var(--color-glass-border)]">
+                  <button onClick={() => { setShowNotifications(false); setShowAllNotificationsModal(true); }} className="text-xs text-[#4361ee] hover:text-[var(--color-text-primary)] w-full text-center py-1">View all</button>
                 </div>
               </motion.div>
             )}
@@ -202,14 +202,14 @@ export default function TopBar({ title, subtitle, user, onLogout, onNavigate }: 
               {user?.name?.charAt(0) || "U"}
             </div>
             <div className="hidden lg:block text-left">
-              <p className="text-sm font-medium text-[#f0f4ff] leading-tight">
+              <p className="text-sm font-medium text-[var(--color-text-primary)] leading-tight">
                 {user?.name || "User"}
               </p>
-              <p className="text-[10px] text-[#5a6a8a] capitalize">
+              <p className="text-[10px] text-[var(--color-text-muted)] capitalize">
                 {user?.role?.replace("_", " ") || "Member"}
               </p>
             </div>
-            <ChevronDown className={`w-3 h-3 text-[#5a6a8a] hidden lg:block transition-transform duration-200 ${showProfile ? 'rotate-180' : ''}`} />
+            <ChevronDown className={`w-3 h-3 text-[var(--color-text-muted)] hidden lg:block transition-transform duration-200 ${showProfile ? 'rotate-180' : ''}`} />
           </button>
 
           <AnimatePresence>
@@ -220,14 +220,14 @@ export default function TopBar({ title, subtitle, user, onLogout, onNavigate }: 
                 animate="visible"
                 exit="exit"
                 transition={{ duration: 0.2 }}
-                className="absolute right-0 mt-2 w-48 rounded-xl bg-[#151d35] border border-white/[0.06] shadow-xl py-1 z-50"
+                className="absolute right-0 mt-2 w-48 rounded-xl bg-[var(--color-surface-800)] border border-[var(--color-glass-border)] shadow-xl py-1 z-50"
               >
                 <button
                   onClick={() => {
                     setShowProfile(false);
                     onNavigate && onNavigate("settings");
                   }}
-                  className="w-full text-left px-4 py-2 text-sm text-[#94a3c8] hover:text-[#f0f4ff] hover:bg-white/[0.03]"
+                  className="w-full text-left px-4 py-2 text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-white/[0.03]"
                 >
                   Settings
                 </button>
@@ -255,7 +255,7 @@ export default function TopBar({ title, subtitle, user, onLogout, onNavigate }: 
                 initial={{ opacity: 0 }} 
                 animate={{ opacity: 1 }} 
                 exit={{ opacity: 0 }} 
-                className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+                className="absolute inset-0 bg-[var(--color-surface-900)]/60 backdrop-blur-sm"
                 onClick={() => setShowAllNotificationsModal(false)}
               />
               <motion.div
@@ -266,11 +266,11 @@ export default function TopBar({ title, subtitle, user, onLogout, onNavigate }: 
               >
                 <button 
                   onClick={() => setShowAllNotificationsModal(false)}
-                  className="absolute top-4 right-4 text-[#5a6a8a] hover:text-[#f0f4ff] transition-colors p-1"
+                  className="absolute top-4 right-4 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] transition-colors p-1"
                 >
                   <X className="w-5 h-5" />
                 </button>
-                <h3 className="text-xl font-bold text-[#f0f4ff] mb-6 flex items-center gap-2">
+                <h3 className="text-xl font-bold text-[var(--color-text-primary)] mb-6 flex items-center gap-2">
                   <Bell className="w-5 h-5" /> All Notifications
                 </h3>
                 
@@ -279,17 +279,17 @@ export default function TopBar({ title, subtitle, user, onLogout, onNavigate }: 
                     <div 
                       key={notif.id} 
                       onClick={() => markAsRead(notif.id)}
-                      className={`p-4 rounded-xl border border-white/[0.06] cursor-pointer transition-colors ${!notif.read ? 'bg-[#1e293b]/50 hover:bg-[#1e293b]/70' : 'bg-transparent hover:bg-white/[0.02]'}`}
+                      className={`p-4 rounded-xl border border-[var(--color-glass-border)] cursor-pointer transition-colors ${!notif.read ? 'bg-[var(--color-surface-700)]/50 hover:bg-[var(--color-surface-700)]/70' : 'bg-transparent hover:bg-white/[0.02]'}`}
                     >
                       <div className="flex justify-between items-start mb-1">
-                        <h4 className={`text-sm ${!notif.read ? 'text-[#f0f4ff] font-semibold' : 'text-[#94a3c8] font-medium'}`}>{notif.title}</h4>
-                        <span className="text-xs text-[#5a6a8a]">{notif.time}</span>
+                        <h4 className={`text-sm ${!notif.read ? 'text-[var(--color-text-primary)] font-semibold' : 'text-[var(--color-text-secondary)] font-medium'}`}>{notif.title}</h4>
+                        <span className="text-xs text-[var(--color-text-muted)]">{notif.time}</span>
                       </div>
-                      <p className="text-xs text-[#94a3c8]">{notif.read ? "Marked as read." : "Action required."}</p>
+                      <p className="text-xs text-[var(--color-text-secondary)]">{notif.read ? "Marked as read." : "Action required."}</p>
                     </div>
                   ))}
                   {notifications.length === 0 && (
-                    <div className="p-4 text-center text-[#5a6a8a]">You're all caught up!</div>
+                    <div className="p-4 text-center text-[var(--color-text-muted)]">You're all caught up!</div>
                   )}
                 </div>
               </motion.div>

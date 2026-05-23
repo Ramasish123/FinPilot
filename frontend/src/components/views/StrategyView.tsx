@@ -135,8 +135,8 @@ export default function StrategyView({ onNavigate }: { onNavigate?: (tab: string
             <Sparkles className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-[#f0f4ff] mb-1">AI CFO Strategy Engine</h3>
-            <p className="text-sm text-[#94a3c8] max-w-2xl">
+            <h3 className="text-lg font-bold text-[var(--color-text-primary)] mb-1">AI CFO Strategy Engine</h3>
+            <p className="text-sm text-[var(--color-text-secondary)] max-w-2xl">
               Your AI-powered Chief Financial Officer continuously analyzes your financial data to provide actionable strategic insights for growth, cost optimization, and risk management.
             </p>
             <div className="flex items-center gap-2 mt-3">
@@ -151,7 +151,7 @@ export default function StrategyView({ onNavigate }: { onNavigate?: (tab: string
       <div>
         <motion.div variants={itemVariants} className="flex items-center gap-2 mb-4">
           <Lightbulb className="w-4 h-4 text-[#f59e0b]" />
-          <h3 className="text-sm font-semibold text-[#f0f4ff]">Priority Insights</h3>
+          <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">Priority Insights</h3>
           {!isAnalyzing && (
             <span className="badge badge-danger text-[10px] !py-0.5">
               {insights.filter((i: any) => i.priority === "high").length} High Priority
@@ -164,8 +164,8 @@ export default function StrategyView({ onNavigate }: { onNavigate?: (tab: string
             <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 2, ease: "linear" }}>
               <Sparkles className="w-8 h-8 text-[#06d6a0] mb-4" />
             </motion.div>
-            <h3 className="text-sm font-bold text-[#f0f4ff]">AI is analyzing your live data...</h3>
-            <p className="text-xs text-[#94a3c8] mt-2">Processing transactions, identifying patterns, generating insights</p>
+            <h3 className="text-sm font-bold text-[var(--color-text-primary)]">AI is analyzing your live data...</h3>
+            <p className="text-xs text-[var(--color-text-secondary)] mt-2">Processing transactions, identifying patterns, generating insights</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -185,13 +185,13 @@ export default function StrategyView({ onNavigate }: { onNavigate?: (tab: string
                     <Icon className={`w-4 h-4 ${colors.text}`} />
                   </div>
                   <div>
-                    <h4 className="text-sm font-semibold text-[#f0f4ff]">{insight.title}</h4>
+                    <h4 className="text-sm font-semibold text-[var(--color-text-primary)]">{insight.title}</h4>
                     <span className={`text-[10px] font-semibold capitalize ${colors.text}`}>
                       {insight.category}
                     </span>
                   </div>
                 </div>
-                <p className="text-xs text-[#94a3c8] mb-3 leading-relaxed">{insight.description}</p>
+                <p className="text-xs text-[var(--color-text-secondary)] mb-3 leading-relaxed">{insight.description}</p>
                 <div className="flex items-center justify-between pt-3 border-t border-white/[0.04]">
                   <span className="text-xs font-bold text-[#06d6a0]">
                     Impact: {insight.impact}
@@ -214,7 +214,7 @@ export default function StrategyView({ onNavigate }: { onNavigate?: (tab: string
       <div>
         <motion.div variants={itemVariants} className="flex items-center gap-2 mb-4">
           <Briefcase className="w-4 h-4 text-[#7c3aed]" />
-          <h3 className="text-sm font-semibold text-[#f0f4ff]">Corporate Strategy Recommendations</h3>
+          <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">Corporate Strategy Recommendations</h3>
         </motion.div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {isAnalyzing ? null : strategies.map((strategy: any) => {
@@ -231,11 +231,11 @@ export default function StrategyView({ onNavigate }: { onNavigate?: (tab: string
                     <Icon className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <h4 className="text-sm font-semibold text-[#f0f4ff]">{strategy.title}</h4>
-                    <span className="text-[10px] text-[#5a6a8a]">{strategy.category}</span>
+                    <h4 className="text-sm font-semibold text-[var(--color-text-primary)]">{strategy.title}</h4>
+                    <span className="text-[10px] text-[var(--color-text-muted)]">{strategy.category}</span>
                   </div>
                 </div>
-                <p className="text-xs text-[#94a3c8] mb-3 leading-relaxed">{strategy.description}</p>
+                <p className="text-xs text-[var(--color-text-secondary)] mb-3 leading-relaxed">{strategy.description}</p>
                 <div className="flex items-center justify-between pt-3 border-t border-white/[0.04]">
                   <span className="text-xs font-bold text-[#06d6a0]">{strategy.impact}</span>
                   <button

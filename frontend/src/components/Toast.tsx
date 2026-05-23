@@ -92,16 +92,16 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
               >
                 <Icon className={`w-5 h-5 ${color.text} flex-shrink-0 mt-0.5`} />
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-[#f0f4ff]">{toast.title}</p>
+                  <p className="text-sm font-semibold text-[var(--color-text-primary)]">{toast.title}</p>
                   {toast.message && (
-                    <p className="text-xs text-[#94a3c8] mt-0.5">{toast.message}</p>
+                    <p className="text-xs text-[var(--color-text-secondary)] mt-0.5">{toast.message}</p>
                   )}
                 </div>
                 <button
                   onClick={() => removeToast(toast.id)}
                   className="p-0.5 rounded-lg hover:bg-white/[0.05] transition-colors flex-shrink-0"
                 >
-                  <X className="w-3.5 h-3.5 text-[#5a6a8a]" />
+                  <X className="w-3.5 h-3.5 text-[var(--color-text-muted)]" />
                 </button>
               </motion.div>
             );

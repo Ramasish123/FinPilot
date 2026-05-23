@@ -247,8 +247,8 @@ export default function ReportsView() {
     <motion.div variants={containerVariants} initial="hidden" animate="show" className="p-6 space-y-6 relative">
       <motion.div variants={itemVariants} className="flex items-center justify-between">
         <div>
-          <h3 className="text-xl font-bold text-[#f0f4ff]">Financial Reports</h3>
-          <p className="text-sm text-[#5a6a8a] mt-1">AI-generated financial statements and analysis reports</p>
+          <h3 className="text-xl font-bold text-[var(--color-text-primary)]">Financial Reports</h3>
+          <p className="text-sm text-[var(--color-text-muted)] mt-1">AI-generated financial statements and analysis reports</p>
         </div>
         <button className="btn-primary flex items-center gap-2" onClick={() => setIsModalOpen(true)}>
           <FileText className="w-4 h-4" />
@@ -277,11 +277,11 @@ export default function ReportsView() {
                     {statusDisplay}
                   </span>
                 </div>
-                <h4 className="text-sm font-semibold text-[#f0f4ff] mb-1">{report.name}</h4>
+                <h4 className="text-sm font-semibold text-[var(--color-text-primary)] mb-1">{report.name}</h4>
                 <div className="flex items-center gap-3 mb-4">
-                  <span className="text-xs text-[#5a6a8a]">{typeDisplay}</span>
-                  <span className="text-xs text-[#5a6a8a]">•</span>
-                  <div className="flex items-center gap-1 text-xs text-[#94a3c8]">
+                  <span className="text-xs text-[var(--color-text-muted)]">{typeDisplay}</span>
+                  <span className="text-xs text-[var(--color-text-muted)]">•</span>
+                  <div className="flex items-center gap-1 text-xs text-[var(--color-text-secondary)]">
                     <Calendar className="w-3 h-3" />
                     {report.period}
                   </div>
@@ -308,33 +308,33 @@ export default function ReportsView() {
             >
               <button 
                 onClick={() => setIsModalOpen(false)}
-                className="absolute top-4 right-4 text-[#5a6a8a] hover:text-[#f0f4ff] transition-colors"
+                className="absolute top-4 right-4 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
 
-              <h3 className="text-lg font-bold text-[#f0f4ff] mb-4">Generate Custom Report</h3>
+              <h3 className="text-lg font-bold text-[var(--color-text-primary)] mb-4">Generate Custom Report</h3>
               
               <form onSubmit={handleGenerateReport} className="space-y-4">
                 <div>
-                  <label className="block text-xs font-medium text-[#94a3c8] mb-1">Report Name</label>
+                  <label className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1">Report Name</label>
                   <input
                     type="text"
                     required
                     value={newReport.name}
                     onChange={(e) => setNewReport({ ...newReport, name: e.target.value })}
-                    className="w-full bg-[#0b1120]/50 border border-[#1e293b] rounded-lg px-4 py-2.5 text-sm text-[#f0f4ff] focus:outline-none focus:border-[#4361ee] focus:ring-1 focus:ring-[#4361ee] transition-all"
+                    className="w-full bg-[var(--color-surface-900)]/50 border border-[var(--color-glass-border)] rounded-lg px-4 py-2.5 text-sm text-[var(--color-text-primary)] focus:outline-none focus:border-[#4361ee] focus:ring-1 focus:ring-[#4361ee] transition-all"
                     placeholder="e.g. Q2 Performance Review"
                   />
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-medium text-[#94a3c8] mb-1">Type</label>
+                    <label className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1">Type</label>
                     <select
                       value={newReport.type}
                       onChange={(e) => setNewReport({ ...newReport, type: e.target.value })}
-                      className="w-full bg-[#0b1120]/50 border border-[#1e293b] rounded-lg px-4 py-2.5 text-sm text-[#f0f4ff] focus:outline-none focus:border-[#4361ee] focus:ring-1 focus:ring-[#4361ee] transition-all"
+                      className="w-full bg-[var(--color-surface-900)]/50 border border-[var(--color-glass-border)] rounded-lg px-4 py-2.5 text-sm text-[var(--color-text-primary)] focus:outline-none focus:border-[#4361ee] focus:ring-1 focus:ring-[#4361ee] transition-all"
                     >
                       <option value="Financial">Financial</option>
                       <option value="Tax">Tax</option>
@@ -345,13 +345,13 @@ export default function ReportsView() {
                   </div>
                   
                   <div>
-                    <label className="block text-xs font-medium text-[#94a3c8] mb-1">Period</label>
+                    <label className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1">Period</label>
                     <input
                       type="text"
                       required
                       value={newReport.period}
                       onChange={(e) => setNewReport({ ...newReport, period: e.target.value })}
-                      className="w-full bg-[#0b1120]/50 border border-[#1e293b] rounded-lg px-4 py-2.5 text-sm text-[#f0f4ff] focus:outline-none focus:border-[#4361ee] focus:ring-1 focus:ring-[#4361ee] transition-all"
+                      className="w-full bg-[var(--color-surface-900)]/50 border border-[var(--color-glass-border)] rounded-lg px-4 py-2.5 text-sm text-[var(--color-text-primary)] focus:outline-none focus:border-[#4361ee] focus:ring-1 focus:ring-[#4361ee] transition-all"
                       placeholder="e.g. Q2 2026"
                     />
                   </div>

@@ -98,19 +98,19 @@ export default function SettingsView() {
     <>
       <motion.div variants={containerVariants} initial="hidden" animate="show" className="p-6 space-y-6 max-w-4xl">
         <motion.div variants={itemVariants}>
-          <h3 className="text-xl font-bold text-[#f0f4ff]">Settings</h3>
-          <p className="text-sm text-[#5a6a8a] mt-1">Manage your account, security, and preferences</p>
+          <h3 className="text-xl font-bold text-[var(--color-text-primary)]">Settings</h3>
+          <p className="text-sm text-[var(--color-text-muted)] mt-1">Manage your account, security, and preferences</p>
         </motion.div>
 
         {/* Profile Section */}
         <motion.div variants={itemVariants} className="glass-card p-5">
           <div className="flex items-center gap-2 mb-4">
             <User className="w-4 h-4 text-[#4361ee]" />
-            <h4 className="text-sm font-semibold text-[#f0f4ff]">Profile</h4>
+            <h4 className="text-sm font-semibold text-[var(--color-text-primary)]">Profile</h4>
           </div>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <label className="text-sm text-[#94a3c8]">Full Name</label>
+              <label className="text-sm text-[var(--color-text-secondary)]">Full Name</label>
               <input 
                 type="text" 
                 value={profile.name} 
@@ -120,7 +120,7 @@ export default function SettingsView() {
               />
             </div>
             <div className="flex items-center justify-between">
-              <label className="text-sm text-[#94a3c8]">Email</label>
+              <label className="text-sm text-[var(--color-text-secondary)]">Email</label>
               <input 
                 type="email" 
                 value={profile.email} 
@@ -130,7 +130,7 @@ export default function SettingsView() {
               />
             </div>
             <div className="flex items-center justify-between">
-              <label className="text-sm text-[#94a3c8]">Company</label>
+              <label className="text-sm text-[var(--color-text-secondary)]">Company</label>
               <input 
                 type="text" 
                 value={profile.company} 
@@ -140,7 +140,7 @@ export default function SettingsView() {
               />
             </div>
             <div className="flex items-center justify-between">
-              <label className="text-sm text-[#94a3c8]">Role</label>
+              <label className="text-sm text-[var(--color-text-secondary)]">Role</label>
               <input 
                 type="text" 
                 value={profile.role} 
@@ -156,25 +156,25 @@ export default function SettingsView() {
         <motion.div variants={itemVariants} className="glass-card p-5">
           <div className="flex items-center gap-2 mb-4">
             <Shield className="w-4 h-4 text-[#4361ee]" />
-            <h4 className="text-sm font-semibold text-[#f0f4ff]">Security</h4>
+            <h4 className="text-sm font-semibold text-[var(--color-text-primary)]">Security</h4>
           </div>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <label className="text-sm text-[#94a3c8]">Two-Factor Authentication</label>
+              <label className="text-sm text-[var(--color-text-secondary)]">Two-Factor Authentication</label>
               <Toggle checked={toggles.twoFactor} onChange={() => handleToggle('twoFactor')} />
             </div>
             <div className="flex items-center justify-between">
-              <label className="text-sm text-[#94a3c8]">Session Timeout</label>
+              <label className="text-sm text-[var(--color-text-secondary)]">Session Timeout</label>
               <input type="text" defaultValue="30 minutes" className="input-field !w-64 !py-2 !text-sm text-right" />
             </div>
             <div className="flex items-center justify-between">
-              <label className="text-sm text-[#94a3c8]">API Key</label>
+              <label className="text-sm text-[var(--color-text-secondary)]">API Key</label>
               <input type="text" defaultValue="fp_sk_****...7a3f" className="input-field !w-64 !py-2 !text-sm text-right" />
             </div>
             <div className="flex items-center justify-between pt-2 border-t border-[#1e293b]">
               <div>
-                <p className="text-sm text-[#f0f4ff]">Password</p>
-                <p className="text-xs text-[#5a6a8a]">Change your account password</p>
+                <p className="text-sm text-[var(--color-text-primary)]">Password</p>
+                <p className="text-xs text-[var(--color-text-muted)]">Change your account password</p>
               </div>
               <button onClick={() => setPasswordModalOpen(true)} className="btn-secondary !py-1.5 !text-xs">Change Password</button>
             </div>
@@ -185,23 +185,23 @@ export default function SettingsView() {
         <motion.div variants={itemVariants} className="glass-card p-5">
           <div className="flex items-center gap-2 mb-4">
             <Bell className="w-4 h-4 text-[#4361ee]" />
-            <h4 className="text-sm font-semibold text-[#f0f4ff]">Notifications</h4>
+            <h4 className="text-sm font-semibold text-[var(--color-text-primary)]">Notifications</h4>
           </div>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <label className="text-sm text-[#94a3c8]">Email Notifications</label>
+              <label className="text-sm text-[var(--color-text-secondary)]">Email Notifications</label>
               <Toggle checked={toggles.emailNotif} onChange={() => handleToggle('emailNotif')} />
             </div>
             <div className="flex items-center justify-between">
-              <label className="text-sm text-[#94a3c8]">Fraud Alerts</label>
+              <label className="text-sm text-[var(--color-text-secondary)]">Fraud Alerts</label>
               <input type="text" defaultValue="Immediate" className="input-field !w-64 !py-2 !text-sm text-right" />
             </div>
             <div className="flex items-center justify-between">
-              <label className="text-sm text-[#94a3c8]">Weekly Reports</label>
+              <label className="text-sm text-[var(--color-text-secondary)]">Weekly Reports</label>
               <Toggle checked={toggles.weeklyReports} onChange={() => handleToggle('weeklyReports')} />
             </div>
             <div className="flex items-center justify-between">
-              <label className="text-sm text-[#94a3c8]">Tax Reminders</label>
+              <label className="text-sm text-[var(--color-text-secondary)]">Tax Reminders</label>
               <Toggle checked={toggles.taxReminders} onChange={() => handleToggle('taxReminders')} />
             </div>
           </div>
@@ -211,27 +211,27 @@ export default function SettingsView() {
         <motion.div variants={itemVariants} className="glass-card p-5">
           <div className="flex items-center gap-2 mb-4">
             <Database className="w-4 h-4 text-[#06d6a0]" />
-            <h4 className="text-sm font-semibold text-[#f0f4ff]">Data & Privacy</h4>
+            <h4 className="text-sm font-semibold text-[var(--color-text-primary)]">Data & Privacy</h4>
           </div>
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-[#f0f4ff]">Data Encryption</p>
-                <p className="text-xs text-[#5a6a8a]">AES-256 encryption for all financial data</p>
+                <p className="text-sm text-[var(--color-text-primary)]">Data Encryption</p>
+                <p className="text-xs text-[var(--color-text-muted)]">AES-256 encryption for all financial data</p>
               </div>
               <span className="badge badge-success text-[10px]">Active</span>
             </div>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-[#f0f4ff]">Audit Logging</p>
-                <p className="text-xs text-[#5a6a8a]">Complete trail of all system actions</p>
+                <p className="text-sm text-[var(--color-text-primary)]">Audit Logging</p>
+                <p className="text-xs text-[var(--color-text-muted)]">Complete trail of all system actions</p>
               </div>
               <span className="badge badge-success text-[10px]">Active</span>
             </div>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-[#f0f4ff]">Export All Data</p>
-                <p className="text-xs text-[#5a6a8a]">Download a complete copy of your financial data</p>
+                <p className="text-sm text-[var(--color-text-primary)]">Export All Data</p>
+                <p className="text-xs text-[var(--color-text-muted)]">Download a complete copy of your financial data</p>
               </div>
               <button className="btn-secondary !py-1.5 !text-xs">Export</button>
             </div>
@@ -257,7 +257,7 @@ export default function SettingsView() {
             >
               <button
                 onClick={() => setPasswordModalOpen(false)}
-                className="absolute top-4 right-4 text-[#5a6a8a] hover:text-[#f0f4ff] transition-colors"
+                className="absolute top-4 right-4 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -267,14 +267,14 @@ export default function SettingsView() {
                   <Key className="w-5 h-5 text-[#4361ee]" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-[#f0f4ff]">Change Password</h3>
-                  <p className="text-xs text-[#5a6a8a]">Update your security credentials</p>
+                  <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">Change Password</h3>
+                  <p className="text-xs text-[var(--color-text-muted)]">Update your security credentials</p>
                 </div>
               </div>
 
               <form onSubmit={handlePasswordSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-sm text-[#94a3c8] mb-1">Current Password</label>
+                  <label className="block text-sm text-[var(--color-text-secondary)] mb-1">Current Password</label>
                   <input
                     type="password"
                     className="input-field w-full"
@@ -284,7 +284,7 @@ export default function SettingsView() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-[#94a3c8] mb-1">New Password</label>
+                  <label className="block text-sm text-[var(--color-text-secondary)] mb-1">New Password</label>
                   <input
                     type="password"
                     className="input-field w-full"
@@ -294,7 +294,7 @@ export default function SettingsView() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-[#94a3c8] mb-1">Confirm New Password</label>
+                  <label className="block text-sm text-[var(--color-text-secondary)] mb-1">Confirm New Password</label>
                   <input
                     type="password"
                     className="input-field w-full"

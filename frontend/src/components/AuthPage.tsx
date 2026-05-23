@@ -82,7 +82,7 @@ export default function AuthPage({ onLogin }: AuthPageProps) {
             </div>
             <div>
               <h1 className="text-2xl font-bold gradient-text">FinPilot AI</h1>
-              <p className="text-xs text-[#5a6a8a]">AI Financial Operating System</p>
+              <p className="text-xs text-[var(--color-text-muted)]">AI Financial Operating System</p>
             </div>
           </motion.div>
 
@@ -91,12 +91,12 @@ export default function AuthPage({ onLogin }: AuthPageProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
           >
-            <h2 className="text-4xl font-bold text-[#f0f4ff] leading-tight mb-4">
+            <h2 className="text-4xl font-bold text-[var(--color-text-primary)] leading-tight mb-4">
               Your AI CFO,<br />
               <span className="gradient-text">Accountant</span> &{" "}
               <span className="gradient-text-gold">Tax Advisor</span>
             </h2>
-            <p className="text-lg text-[#94a3c8] max-w-md">
+            <p className="text-lg text-[var(--color-text-secondary)] max-w-md">
               The next-generation financial platform that replaces your expense tracker, accounting software, and financial advisor — all powered by AI.
             </p>
           </motion.div>
@@ -122,8 +122,8 @@ export default function AuthPage({ onLogin }: AuthPageProps) {
                   <Icon className="w-5 h-5 text-[#4361ee]" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-[#f0f4ff]">{f.title}</p>
-                  <p className="text-xs text-[#5a6a8a]">{f.desc}</p>
+                  <p className="text-sm font-semibold text-[var(--color-text-primary)]">{f.title}</p>
+                  <p className="text-xs text-[var(--color-text-muted)]">{f.desc}</p>
                 </div>
               </motion.div>
             );
@@ -148,10 +148,10 @@ export default function AuthPage({ onLogin }: AuthPageProps) {
           </div>
 
           <div className="glass-card p-8">
-            <h3 className="text-xl font-bold text-[#f0f4ff] mb-1">
+            <h3 className="text-xl font-bold text-[var(--color-text-primary)] mb-1">
               {isLogin ? "Welcome Back" : "Create Account"}
             </h3>
-            <p className="text-sm text-[#5a6a8a] mb-6">
+            <p className="text-sm text-[var(--color-text-muted)] mb-6">
               {isLogin ? "Sign in to your AI financial dashboard" : "Start your financial intelligence journey"}
             </p>
 
@@ -170,9 +170,9 @@ export default function AuthPage({ onLogin }: AuthPageProps) {
             <form onSubmit={handleSubmit} className="space-y-4">
               {!isLogin && (
                 <div>
-                  <label className="text-xs font-medium text-[#94a3c8] mb-1.5 block">Full Name</label>
+                  <label className="text-xs font-medium text-[var(--color-text-secondary)] mb-1.5 block">Full Name</label>
                   <div className="relative">
-                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#5a6a8a]" />
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-text-muted)]" />
                     <input
                       type="text"
                       value={name}
@@ -185,9 +185,9 @@ export default function AuthPage({ onLogin }: AuthPageProps) {
               )}
 
               <div>
-                <label className="text-xs font-medium text-[#94a3c8] mb-1.5 block">Email</label>
+                <label className="text-xs font-medium text-[var(--color-text-secondary)] mb-1.5 block">Email</label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#5a6a8a]" />
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-text-muted)]" />
                   <input
                     type="email"
                     value={email}
@@ -199,9 +199,9 @@ export default function AuthPage({ onLogin }: AuthPageProps) {
               </div>
 
               <div>
-                <label className="text-xs font-medium text-[#94a3c8] mb-1.5 block">Password</label>
+                <label className="text-xs font-medium text-[var(--color-text-secondary)] mb-1.5 block">Password</label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#5a6a8a]" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-text-muted)]" />
                   <input
                     type={showPassword ? "text" : "password"}
                     value={password}
@@ -212,7 +212,7 @@ export default function AuthPage({ onLogin }: AuthPageProps) {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5a6a8a] hover:text-[#94a3c8]"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]"
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
@@ -242,7 +242,7 @@ export default function AuthPage({ onLogin }: AuthPageProps) {
             </form>
 
             {/* Toggle */}
-            <p className="text-center mt-6 text-sm text-[#94a3c8]">
+            <p className="text-center mt-6 text-sm text-[var(--color-text-secondary)]">
               {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
               <button
                 onClick={() => {
@@ -256,7 +256,7 @@ export default function AuthPage({ onLogin }: AuthPageProps) {
             </p>
           </div>
 
-          <p className="text-center mt-4 text-[10px] text-[#5a6a8a]">
+          <p className="text-center mt-4 text-[10px] text-[var(--color-text-muted)]">
             By continuing, you agree to FinPilot AI&apos;s Terms of Service and Privacy Policy
           </p>
         </motion.div>
